@@ -59,7 +59,7 @@ const BlogsPage = () => {
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* FEATURED BLOG */}
-                        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div className="bg-white rounded-2xl shadow-lg overflow-hidden" onClick={()=>navigate('/blogDetails')}>
                             <img
                                 src={blogs[0].img}
                                 alt=""
@@ -83,6 +83,7 @@ const BlogsPage = () => {
                                 <div
                                     key={index}
                                     className="bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden"
+                                    onClick={()=>navigate('/blogDetails')}
                                 >
                                     <img
                                         src={blog.img}
