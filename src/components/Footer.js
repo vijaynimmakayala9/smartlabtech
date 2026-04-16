@@ -8,9 +8,9 @@ const FOOTER_LINKS = {
   Support: ['Technical Support', 'Documentation', 'FAQs', 'Request a Demo', 'Get a Quote', 'Contact Us'],
 };
 
-export default function Footer() {
+export default function Footer({ id }) {
   return (
-    <footer className="bg-slate-900 text-slate-200 pt-[72px]">
+    <footer id={id} className="bg-slate-900 text-slate-200 pt-[72px]">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-8 lg:px-20">
 
         {/* Newsletter bar */}

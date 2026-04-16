@@ -286,7 +286,7 @@ const SLIDES = [
   { url: img3, year: '2009', label: 'ISO Certified',  desc: 'Achieved ISO certification, marking our commitment to global quality standards.' },
 ];
 
-export default function JourneySection() {
+export default function JourneySection({ id }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -295,7 +295,7 @@ export default function JourneySection() {
   }, []);
 
   return (
-    <section className="bg-white py-2.5 min-h-screen overflow-hidden relative font-body">
+    <section id={id} className="bg-white py-2.5 min-h-screen overflow-hidden relative font-body">
       {/* Background glow orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -bottom-[15%] -right-[8%] w-[600px] h-[600px] rounded-full"

@@ -286,9 +286,9 @@ function Reveal({ children, delay = 0 }) {
   );
 }
 
-export default function Services() {
+export default function Services({ id }) {
   return (
-    <section id="services" className="relative overflow-hidden bg-slate-50 py-16 sm:py-24">
+    <section id={id} className="relative overflow-hidden bg-slate-50 py-16 sm:py-24">
       {/* Blob */}
       <div className="absolute -top-48 -right-48 w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle,rgba(14,165,233,0.06) 0%,transparent 70%)' }} />

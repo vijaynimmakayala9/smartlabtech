@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Menu, X, ChevronRight, ArrowRight, Phone, Mail } from 'lucide-react';
+import { ChevronDown, Menu, X, ChevronRight, ArrowRight, Phone, Mail, HelpCircle, BookOpen, FileText, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../modal/Modal';
 import { QuoteForm } from '../modal/QuoteForm';
 import { CATEGORIES } from '../data/Categories';
 
+const NAV_LINKS = ['Home', 'About', 'Products', 'Services', 'Contact', 'More'];
 
-
-const NAV_LINKS = ['Home', 'About', 'Products', 'Services', 'Contact'];
+// More dropdown items
+const MORE_LINKS = [
+  { name: 'Support', icon: <HelpCircle size={16} />, link: '/support' },
+  { name: 'Resources', icon: <BookOpen size={16} />, link: '/resources' },
+  { name: 'Blogs', icon: <FileText size={16} />, link: '/blogs' },
+  { name: 'Career', icon: <Briefcase size={16} />, link: '/career' },
+];
 
 // Keep these in sync with the Tailwind height classes on the nav element
 const TOP_BAR_H = 42;
@@ -18,6 +24,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
+  const [moreDropOpen, setMoreDropOpen] = useState(false);
   const [activeCat, setActiveCat] = useState('Weighing & Measurement');
   const [mobileExpanded, setMobileExpanded] = useState({});
 
@@ -25,6 +32,7 @@ export default function Navbar() {
   const close = () => setOpen(null);
 
   const timerRef = useRef(null);
+  const moreTimerRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +43,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const fn = (e) => {
-      if (!e.target.closest('[data-navbar]')) setDropOpen(false);
+      if (!e.target.closest('[data-navbar]')) {
+        setDropOpen(false);
+        setMoreDropOpen(false);
+      }
     };
     document.addEventListener('mousedown', fn);
     return () => document.removeEventListener('mousedown', fn);
@@ -43,8 +54,13 @@ export default function Navbar() {
 
   useEffect(() => {
     const fn = () => {
-      if (window.innerWidth >= 1024) setMobileOpen(false);
-      if (window.innerWidth < 1024) setDropOpen(false);
+      if (window.innerWidth >= 1024) {
+        setMobileOpen(false);
+      }
+      if (window.innerWidth < 1024) {
+        setDropOpen(false);
+        setMoreDropOpen(false);
+      }
     };
     window.addEventListener('resize', fn);
     return () => window.removeEventListener('resize', fn);
@@ -52,13 +68,28 @@ export default function Navbar() {
 
   const openDrop = () => { if (window.innerWidth >= 1024) { clearTimeout(timerRef.current); setDropOpen(true); } };
   const closeDrop = () => { timerRef.current = setTimeout(() => setDropOpen(false), 150); };
+  
+  const openMoreDrop = () => { if (window.innerWidth >= 1024) { clearTimeout(moreTimerRef.current); setMoreDropOpen(true); } };
+  const closeMoreDrop = () => { moreTimerRef.current = setTimeout(() => setMoreDropOpen(false), 150); };
 
   const handleNavClick = (link) => {
     setMobileOpen(false);
     setDropOpen(false);
-    if (link === 'Home') { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    else if (link === 'Products') document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
-    else document.getElementById(link.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+    setMoreDropOpen(false);
+    if (link === 'Home') {
+      navigate('/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (link === 'About') {
+      navigate('/about');
+    } else if (link === 'Products') {
+      navigate('/products');
+    } else if (link === 'Services') {
+      navigate('/services');
+    } else if (link === 'Contact') {
+      navigate('/contact');
+    } else {
+      document.getElementById(link.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const toggleMobileCat = (key) =>
@@ -139,6 +170,23 @@ export default function Navbar() {
                   <ChevronDown size={15} />
                 </motion.span>
               </button>
+            ) : link === 'More' ? (
+              <button
+                key={link}
+                onMouseEnter={openMoreDrop}
+                onMouseLeave={closeMoreDrop}
+                className={`flex items-center gap-1.5 px-3 xl:px-4 py-2 rounded-lg text-sm font-semibold
+                  transition-all duration-150 cursor-pointer border-none
+                  ${moreDropOpen
+                    ? 'text-blue-900 bg-indigo-50'
+                    : 'text-black bg-transparent hover:text-blue-900 hover:bg-indigo-50'
+                  }`}
+              >
+                More
+                <motion.span animate={{ rotate: moreDropOpen ? 180 : 0 }} transition={{ duration: 0.2 }} className="flex items-center">
+                  <ChevronDown size={15} />
+                </motion.span>
+              </button>
             ) : (
               <button
                 key={link}
@@ -184,6 +232,7 @@ export default function Navbar() {
         </button>
       </motion.nav>
 
+      {/* Products Dropdown */}
       <AnimatePresence>
         {dropOpen && (
           <motion.div
@@ -214,7 +263,7 @@ export default function Navbar() {
                 <button
                   onClick={() => {
                     setDropOpen(false);
-                    handleNavClick("Products");
+                    navigate('/products');
                   }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white
               border border-white/25 bg-white/15 hover:bg-white/30 transition"
@@ -297,11 +346,71 @@ export default function Navbar() {
                 <button
                   onClick={() => {
                     setDropOpen(false);
-                    handleNavClick("Contact");
+                    navigate('/contact');
                   }}
                   className="px-4 py-1.5 rounded-lg text-xs font-semibold border border-blue-400 text-blue-600 hover:bg-blue-600 hover:text-white transition"
                 >
                   Contact Expert
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* More Dropdown */}
+      <AnimatePresence>
+        {moreDropOpen && (
+          <motion.div
+            data-navbar
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onMouseEnter={openMoreDrop}
+            onMouseLeave={closeMoreDrop}
+            className="fixed left-0 right-0 z-[999] flex justify-center px-4"
+            style={{ top: TOP_BAR_H + NAV_H + 8 }}
+          >
+            <div className="w-full max-w-[420px] bg-white rounded-2xl border border-slate-200 shadow-[0_20px_60px_rgba(15,35,86,0.18)] overflow-hidden">
+              {/* Header */}
+              <div className="px-5 py-4 bg-gradient-to-r from-[#0f2356] to-[#2563eb]">
+                <p className="text-sm font-bold text-white tracking-wide">Explore More</p>
+                <p className="text-xs text-white/60 mt-0.5">Additional resources & information</p>
+              </div>
+
+              {/* Links */}
+              <div className="p-2">
+                {MORE_LINKS.map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      setMoreDropOpen(false);
+                      navigate(item.link);
+                    }}
+                    className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-indigo-50 transition text-left group"
+                  >
+                    <div className="w-9 h-9 flex items-center justify-center bg-slate-100 rounded-lg text-slate-600 group-hover:bg-indigo-100 group-hover:text-blue-600 transition-colors">
+                      {item.icon}
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-900">
+                      {item.name}
+                    </span>
+                    <ChevronRight size={14} className="ml-auto opacity-0 group-hover:opacity-100 transition text-slate-400" />
+                  </button>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 py-3 bg-slate-50 border-t border-slate-100">
+                <button
+                  onClick={() => {
+                    setMoreDropOpen(false);
+                    navigate('/contact');
+                  }}
+                  className="text-xs font-medium text-blue-600 hover:text-blue-800 transition"
+                >
+                  Can't find what you're looking for? Contact us →
                 </button>
               </div>
             </div>
@@ -404,6 +513,48 @@ export default function Navbar() {
                         )}
                       </AnimatePresence>
                     </div>
+                  ) : link === 'More' ? (
+                    <div key={link}>
+                      <button
+                        onClick={() => toggleMobileCat('more-top')}
+                        className="flex items-center justify-between w-full px-5 py-4 bg-transparent
+                          border-b border-slate-100 cursor-pointer text-sm text-slate-700 font-medium text-left
+                          transition-all hover:bg-indigo-50 hover:text-blue-900"
+                      >
+                        More
+                        <motion.span
+                          animate={{ rotate: mobileExpanded['more-top'] ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center"
+                        >
+                          <ChevronDown size={16} className="text-slate-400" />
+                        </motion.span>
+                      </button>
+
+                      <AnimatePresence>
+                        {mobileExpanded['more-top'] && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            className="overflow-hidden"
+                          >
+                            {MORE_LINKS.map(item => (
+                              <button
+                                key={item.name}
+                                onClick={() => { setMobileOpen(false); navigate(item.link); }}
+                                className="flex items-center gap-3 w-full px-6 py-3 bg-transparent
+                                  border-b border-slate-50 cursor-pointer text-left hover:bg-indigo-50 transition-colors"
+                              >
+                                <span className="text-lg w-7 text-center flex-shrink-0 text-slate-500">{item.icon}</span>
+                                <p className="text-sm font-medium text-slate-700 leading-snug">{item.name}</p>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   ) : (
                     <button
                       key={link}
@@ -420,7 +571,7 @@ export default function Navbar() {
 
               <div className="p-4">
                 <button
-                  onClick={() => { setMobileOpen(false); handleNavClick('Contact'); }}
+                  onClick={() => { setMobileOpen(false); navigate('/contact'); }}
                   className="w-full py-3.5 rounded-xl text-sm font-semibold text-white border-none cursor-pointer
                     bg-gradient-to-r from-blue-900 to-sky-500 shadow-md"
                 >

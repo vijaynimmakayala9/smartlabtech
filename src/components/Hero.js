@@ -28,7 +28,7 @@ const smoothScrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
-export default function Hero() {
+export default function Hero({ id }) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [displayText, setDisplayText] = useState("");
@@ -70,7 +70,7 @@ export default function Hero() {
   const restWords = words.slice(1).join(" ");
 
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-to-br from-blue-50 via-white to-blue-50 overflow-hidden">
+    <section id={id} className="relative min-h-screen flex items-center bg-gradient-to-br from-blue-50 via-white to-blue-50 overflow-hidden">
 
       {/* Background blobs */}
       <div className="absolute -top-32 -right-32 w-[400px] h-[400px] bg-sky-200/30 rounded-full blur-3xl" />
