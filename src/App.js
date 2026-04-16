@@ -10,6 +10,8 @@ import ProductDetails from './pages/ProductDetails.js';
 import ProductsPage from './pages/ProductsPage.js';
 import CategoryProductsPage from './pages/CategoryProductsPage.js';
 import Careers from './pages/CareersPage.js';
+import Support from './pages/SupportPage.js';
+import ResourcesPage from './pages/ResourcesPage.js';
 
 const App = () => {
   return (
@@ -17,6 +19,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path='/products' element={<ProductsPage/>}/>
+        <Route path='/category' element={<CategoryProductsPage />} />
         <Route path='/category/:categoryName' element={<CategoryProductsPage />} />
         <Route path='/product/:productId' element={<ProductDetails />} />
         <Route path='/contact' element={<ContactPage />} />
@@ -25,6 +28,8 @@ const App = () => {
         <Route path='/blogs' element={<BlogsPage />} />
         <Route path='/blogDetails/:id' element={<BlogDetailsPage />} />
         <Route path='/career' element={<Careers />} />
+        <Route path='/support' element={<Support />} />
+        <Route path='/resources' element={<ResourcesPage />} />
       </Routes>
     </>
   )
