@@ -1329,32 +1329,7 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Stats Section - Premium gradient backgrounds */}
-      <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { icon: Users, val: '200+', label: 'Team Members' },
-              { icon: Building2, val: '25+', label: 'Cities Covered' },
-              { icon: Award, val: '20+', label: 'Years of Growth' },
-              { icon: Zap, val: '6', label: 'Open Positions' },
-            ].map(({ icon: Icon, val, label }, i) => (
-              <Reveal key={label} delay={i * 0.08}>
-                <div className="bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)] rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-all">
-                  <div className="w-11 h-11 rounded-xl bg-[linear-gradient(135deg,rgba(15,35,86,0.15)_0%,rgba(30,58,138,0.1)_50%,rgba(14,165,233,0.15)_100%)] flex items-center justify-center">
-                    <Icon size={18} className="text-blue-700" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-blue-700 leading-none" style={{ fontFamily: "'Playfair Display', serif" }}>{val}</p>
-                    <p className="text-[11px] text-slate-400 font-medium mt-0.5 tracking-wide uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>{label}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
+    
       {/* Listings Section */}
       <section id="listings" className="bg-slate-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">

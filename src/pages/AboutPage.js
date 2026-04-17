@@ -7,6 +7,7 @@ import {
 import { ArrowRight, Target, Eye } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SideButtons from "../components/SideButton";
 
 /* ─── Google Fonts (only font import, no custom CSS classes) ─────────── */
 const FontLink = () => (
@@ -313,7 +314,7 @@ const AboutPage = () => {
           </div>
         </div>
       </Reveal>
-
+      <SideButtons />
       <Footer />
     </>
   );

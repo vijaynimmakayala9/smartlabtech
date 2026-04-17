@@ -77,17 +77,44 @@ export default function Navbar() {
     setMobileOpen(false);
     setDropOpen(false);
     setMoreDropOpen(false);
+
+    const currentPath = window.location.pathname;
+
     if (link === 'Home') {
+      if (currentPath === '/') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }else{
       navigate('/');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout (() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+    }
     } else if (link === 'About') {
-      navigate('/about');
+      if (currentPath === '/about') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }else{
+        navigate('/about');
+        setTimeout (() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+      }
     } else if (link === 'Products') {
-      navigate('/products');
+      if (currentPath === '/products') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }else{
+        navigate('/products');
+        setTimeout (() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+      }
     } else if (link === 'Services') {
-      navigate('/services');
+      if (currentPath === '/services') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }else{
+        navigate('/services');
+        setTimeout (() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+      }
     } else if (link === 'Contact') {
-      navigate('/contact');
+      if (currentPath === '/contact') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }else{
+        navigate('/contact');
+        setTimeout (() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+      }
     } else {
       document.getElementById(link.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
     }
