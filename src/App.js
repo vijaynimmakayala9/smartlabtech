@@ -13,6 +13,8 @@ import Careers from './pages/CareersPage.js';
 import Support from './pages/SupportPage.js';
 import ResourcesPage from './pages/ResourcesPage.js';
 import SideButtons from './components/SideButton.js';
+import SearchBar from './components/SearchBar.js';
+import SearchResults from './pages/SearchPage.js';
 
 const App = () => {
   return (
@@ -32,6 +34,7 @@ const App = () => {
         <Route path='/career' element={<Careers />} />
         <Route path='/support' element={<Support />} />
         <Route path='/resources' element={<ResourcesPage />} />
+        <Route path='/search' element={<SearchResults />} />
       </Routes>
     </>
   )
