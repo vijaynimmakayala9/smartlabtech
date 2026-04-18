@@ -1,4 +1,4 @@
-// pages/SearchResults.js
+
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -171,106 +171,10 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
                 <X size={16} className="sm:w-4 sm:h-4" />
               </motion.button>
             )}
-            
-            {/* Search button */}
-            {/* <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSearchClick}
-              className={`hidden sm:flex flex-shrink-0 items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${
-                isFocused 
-                  ? 'bg-white text-blue-600 hover:bg-white/90 shadow-lg' 
-                  : 'bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:shadow-lg hover:shadow-blue-500/30'
-              }`}
-            >
-              <Search size={16} className="sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Search</span>
-            </motion.button> */}
           </div>
         </div>
       </div>
 
-      {/* <AnimatePresence>
-        {showRecent && !searchInput && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 z-50 mt-3"
-          >
-            <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-              {recentSearches.length > 0 && (
-                <div className="p-4 border-b border-slate-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <History size={14} className="text-slate-400" />
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Recent Searches
-                      </span>
-                    </div>
-                    <button
-                      onClick={clearRecentSearches}
-                      className="text-xs text-slate-400 hover:text-red-500 transition"
-                    >
-                      Clear All
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {recentSearches.map((term, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleRecentClick(term)}
-                        className="px-3 py-1.5 bg-slate-50 text-slate-700 text-sm rounded-full border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition flex items-center gap-1.5"
-                      >
-                        <Clock size={12} className="text-slate-400" />
-                        {term}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <TrendingUp size={14} className="text-amber-500" />
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Popular Searches
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {popularSearches.map((item, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setSearchInput(item.term);
-                        saveToRecent(item.term);
-                        onSearch(item.term);
-                        setShowRecent(false);
-                      }}
-                      className="flex items-center gap-2 px-3 py-2.5 bg-gradient-to-br from-slate-50 to-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group"
-                    >
-                      <span className="text-lg">{item.icon}</span>
-                      <span className="text-xs sm:text-sm text-slate-700 group-hover:text-blue-600 transition line-clamp-1">
-                        {item.term}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-sky-50 border-t border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={12} className="text-blue-500" />
-                  <span className="text-xs text-slate-500">
-                    Try searching by <span className="font-medium text-slate-700">brand</span>, <span className="font-medium text-slate-700">category</span>, or <span className="font-medium text-slate-700">application</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
 
       <AnimatePresence>
         {isFocused && searchInput && (
