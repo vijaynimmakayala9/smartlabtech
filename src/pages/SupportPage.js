@@ -234,7 +234,7 @@ export default function Support() {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none bg-gradient-to-bl from-sky-500/10 to-transparent rounded-full blur-3xl" />
 
         {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
+        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
           style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}>
 
           {/* Eyebrow */}
@@ -301,7 +301,7 @@ export default function Support() {
 
       {/* Features Section - Premium gradient backgrounds */}
       <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {FEATURES.map((feature, i) => (
               <Reveal key={feature.title} delay={i * 0.08}>
@@ -322,7 +322,7 @@ export default function Support() {
 
       {/* Services Section */}
       <section className="bg-slate-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -349,7 +349,7 @@ export default function Support() {
 
       {/* Service Life Cycle Section */}
       <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <Reveal className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[linear-gradient(135deg,rgba(15,35,86,0.1)_0%,rgba(30,58,138,0.08)_50%,rgba(14,165,233,0.1)_100%)] text-blue-700 text-xs font-semibold mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -397,7 +397,7 @@ export default function Support() {
 
       {/* Smart Application Lab Section - Premium gradient */}
       <section className="py-16 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
               <FlaskConical size={12} /> Smart Application Lab
@@ -429,7 +429,7 @@ export default function Support() {
 
       {/* FAQ Section */}
       <section className="bg-slate-50 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-10">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -457,7 +457,7 @@ export default function Support() {
       {/* Contact CTA Section - Premium gradient */}
       <Reveal>
         <div className="py-16 px-4 bg-slate-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+          <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="rounded-2xl p-8 sm:p-12 flex flex-wrap items-center justify-between gap-6 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
               <div>
                 <p className="text-[11px] font-bold text-sky-200 tracking-widest uppercase mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Need Help with Analytical Challenges?</p>

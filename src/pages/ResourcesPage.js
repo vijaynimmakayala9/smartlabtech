@@ -214,7 +214,7 @@ const ResourcesPage = () => {
 
         <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none bg-gradient-to-bl from-sky-500/10 to-transparent rounded-full blur-3xl" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center text-center h-full"
+        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center text-center h-full"
           style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}>
 
           <motion.div
@@ -234,7 +234,8 @@ const ResourcesPage = () => {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1 }}
-            className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.1] mb-6 text-center"
+            className="text-4xl sm:text-5xl lg:text-
+             xl:text-8xl font-bold text-white leading-[1.1] mb-6 text-center"
             style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '-0.02em' }}
           >
             Resources{' '}
@@ -257,7 +258,7 @@ const ResourcesPage = () => {
 
       {/* Quick Links Navigation */}
       <section className="bg-white py-8 border-b border-slate-100 sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="flex flex-wrap justify-center gap-3">
             {[
               { href: "#articles", label: "Technical Articles", icon: FaNewspaper },
@@ -283,7 +284,7 @@ const ResourcesPage = () => {
 
       {/* 1. Technical Articles Section */}
       <section id="articles" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -327,7 +328,7 @@ const ResourcesPage = () => {
 
       {/* 2. Product Brochures Section */}
       <section id="brochures" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -369,7 +370,7 @@ const ResourcesPage = () => {
 
       {/* 3. Service Documents Section */}
       <section id="service-docs" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -408,7 +409,7 @@ const ResourcesPage = () => {
 
       {/* 4. Videos Section */}
       <section id="videos" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -447,7 +448,7 @@ const ResourcesPage = () => {
 
       {/* 5. Case Studies Section */}
       <section id="case-studies" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -486,7 +487,7 @@ const ResourcesPage = () => {
 
       {/* 6. FAQ Section */}
       <section id="faq" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -513,7 +514,7 @@ const ResourcesPage = () => {
 
       {/* 7. Certifications Section */}
       <section id="certifications" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-8 h-px bg-blue-600" />
@@ -548,7 +549,7 @@ const ResourcesPage = () => {
       {/* CTA Section */}
       <Reveal>
         <div className="py-20 px-4 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center">
             <div className="rounded-3xl p-12 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Need Personalized Assistance?

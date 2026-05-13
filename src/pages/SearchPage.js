@@ -475,7 +475,7 @@ export default function SearchResults() {
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-sky-400/15 rounded-full blur-3xl" />
           </div>
 
-          <div className="relative z-10 max-w-7xl mx-auto">
+          <div className="relative z-10 max-w-8xl mx-auto">
             <div className="text-center mb-6">
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -535,7 +535,7 @@ export default function SearchResults() {
         {/* Filters Bar */}
         {filteredResults.length > 0 && (
           <section className="sticky top-[106px] sm:top-[114px] lg:top-[122px] z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-8xl mx-auto">
               <div className="flex flex-wrap items-center gap-3">
                 <select
                   value={selectedCategory}
@@ -594,7 +594,7 @@ export default function SearchResults() {
 
         {/* Results Section */}
         <section className="py-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-8xl mx-auto">
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -617,7 +617,7 @@ export default function SearchResults() {
         {/* Related Categories */}
         {filteredResults.length > 0 && (
           <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-8xl mx-auto">
               <h3 className="font-serif text-xl font-bold text-slate-900 mb-4">Browse Categories</h3>
               <div className="flex flex-wrap gap-2">
                 {categories.filter(c => c !== 'All').slice(0, 8).map(cat => (

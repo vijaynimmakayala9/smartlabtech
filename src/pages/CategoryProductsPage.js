@@ -137,7 +137,7 @@ const CategoryProductsPage = () => {
           backgroundSize: '64px 64px'
         }} />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
+        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
           style={{ paddingTop: 'clamp(60px,10vw,100px)', paddingBottom: 'clamp(40px,8vw,80px)' }}>
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
@@ -177,7 +177,7 @@ const CategoryProductsPage = () => {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20 py-12 lg:py-16 bg-slate-50">
+      <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 py-12 lg:py-16 bg-slate-50">
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Sidebar - Categories */}
@@ -429,7 +429,7 @@ const CategoryProductsPage = () => {
       {/* CTA Section */}
       <Reveal>
         <div className="py-16 px-4 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+          <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="rounded-2xl p-8 sm:p-12 flex flex-wrap items-center justify-between gap-6 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
               <div>
                 <p className="text-[11px] font-bold text-sky-200 tracking-widest uppercase mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Need Assistance?</p>

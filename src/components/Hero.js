@@ -101,7 +101,7 @@ export default function Hero({ id }) {
       <div className="absolute -bottom-20 -left-20 w-40 h-40 sm:w-64 sm:h-64 md:w-[320px] md:h-[320px] bg-blue-300/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-64 md:h-64 bg-sky-100/40 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="relative z-10 max-w-9xl mx-auto w-full px-4 sm:px-6 lg:px-12 xl:px-16 py-10 sm:py-16 lg:py-12">
+      <div className="relative z-10 max-w-8xl mx-auto w-full px-4 sm:px-6 lg:px-12 xl:px-16 py-10 sm:py-16 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center">
 
           {/* ── IMAGE PANEL ── */}

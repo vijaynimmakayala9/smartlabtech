@@ -94,7 +94,7 @@ const BlogsPage = () => {
                 {/* Hero Section - Premium */}
                 <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-[#0f2356] to-[#1e3a8a] text-white">
                     <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
-                    <div className="relative max-w-7xl mx-auto px-6 py-24 md:py-32 text-center">
+                    <div className="relative max-w-8xl mx-auto px-6 py-24 md:py-32 text-center">
                         <div className="inline-block mb-4 px-4 py-1 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium">
                             Knowledge Hub
                         </div>
@@ -109,7 +109,7 @@ const BlogsPage = () => {
                     {/* <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent"></div> */}
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+                <div className="max-w-8xl mx-auto px-6 py-16 lg:py-20">
                     {/* Search and Filter Bar */}
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
                         <div className="flex flex-wrap justify-center gap-3">

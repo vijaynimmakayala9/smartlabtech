@@ -1025,7 +1025,7 @@ const ProductDetails = () => {
           <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-blue-100/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-sky-100/20 rounded-full blur-3xl" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
 
               {/* Gallery */}
@@ -1144,7 +1144,7 @@ const ProductDetails = () => {
 
         {/* ── Tabbed Detail Section ── */}
         <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-8xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8 sm:mb-10">
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2">
                 Product <span className="gradient-text">Details</span>
@@ -1273,7 +1273,7 @@ const ProductDetails = () => {
         {/* ── Brand Section ── */}
         {brand && (
           <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-8xl mx-auto">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-4">
                   <Building2 size={14} className="text-blue-600" />
@@ -1381,7 +1381,7 @@ const ProductDetails = () => {
         {/* ── Recommended Products Section ── */}
         {recommendedProducts.length > 0 && (
           <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-8xl mx-auto">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full mb-4">
                   <ThumbsUp size={14} className="text-amber-600" />
@@ -1461,7 +1461,7 @@ const ProductDetails = () => {
 
         {/* ── CTA Banner ── */}
         <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-8xl mx-auto">
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden">
               <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="Laboratory" className="absolute inset-0 w-full h-full object-cover" />

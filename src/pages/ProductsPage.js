@@ -467,7 +467,7 @@ const ProductsPage = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-sky-100/15 rounded-full" />
           </div>
 
-          <div className="relative z-10 max-w-7xl mx-auto">
+          <div className="relative z-10 max-w-8xl mx-auto">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-6">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -632,7 +632,7 @@ const ProductsPage = () => {
 
         {/* All Products Section */}
         <section className="py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-8xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="font-serif text-xl sm:text-2xl font-bold text-slate-900">All Products</h2>
@@ -677,7 +677,7 @@ const ProductsPage = () => {
 
         {/* Features Banner with Blue Overlay */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-8xl mx-auto">
             <div className="relative rounded-3xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-sky-700" />
               <div className="relative z-10 p-8 sm:p-12">
@@ -706,7 +706,7 @@ const ProductsPage = () => {
 
         {/* CTA Section */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

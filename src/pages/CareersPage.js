@@ -446,7 +446,7 @@ export default function Careers() {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none bg-gradient-to-bl from-sky-500/10 to-transparent rounded-full blur-3xl" />
 
         {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
+        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
           style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}>
           
           {/* Eyebrow */}
@@ -512,7 +512,7 @@ export default function Careers() {
     
       {/* Listings Section */}
       <section id="listings" className="bg-slate-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           
           {/* Section header */}
           <Reveal className="mb-10">
@@ -674,7 +674,7 @@ export default function Careers() {
       {/* CTA Banner - Premium gradient with hero overlay style */}
       <Reveal>
         <div className="py-16 px-4 bg-slate-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
+          <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="rounded-2xl p-8 sm:p-12 flex flex-wrap items-center justify-between gap-6 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
               <div>
                 <p className="text-[11px] font-bold text-sky-200 tracking-widest uppercase mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>Can't find your role?</p>
