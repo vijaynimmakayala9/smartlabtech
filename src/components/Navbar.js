@@ -3,13 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, Menu, X, ChevronRight, ArrowRight,
   Phone, Mail, HelpCircle, BookOpen, FileText, Briefcase,
-  Search
+  Search, Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../modal/Modal';
 import { QuoteForm } from '../modal/QuoteForm';
-import { CATEGORIES } from '../data/Categories';
 import SearchBar from './SearchBar';
+
+const CATEGORY_ICONS = {
+  'Weighing & Measurement': '⚖️',
+  'Thermal Cooling': '❄️',
+  'Chromatography': '🔬',
+  'Rheology & Texture': '🌀',
+  'Isolation & Safety': '🛡️',
+  'Micro Biology': '🦠',
+  'Laboratory Equipment': '⚗️',
+};
+
+const FALLBACK_PRODUCT_ICON = '🧪';
 
 const NAV_LINKS = ['Home', 'About', 'Products', 'Services', 'Contact', 'More'];
 
@@ -27,8 +38,14 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
   const [moreDropOpen, setMoreDropOpen] = useState(false);
-  const [activeCat, setActiveCat] = useState('Weighing & Measurement');
+  const [activeCat, setActiveCat] = useState(null);
   const [mobileExpanded, setMobileExpanded] = useState({});
+
+  // ── API state ──
+  const [categories, setCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [catError, setCatError] = useState(null);
+  const catFetchedRef = useRef(false);
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,14 +61,39 @@ export default function Navbar() {
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
 
-  /* ── scroll ── */
+  // ── Fetch categories from API ──
+  const fetchCategories = async () => {
+    if (catFetchedRef.current) return;
+    catFetchedRef.current = true;
+    setCatLoading(true);
+    setCatError(null);
+    try {
+      const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/categories/with-products');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        const active = json.data.filter(c => c.isActive);
+        setCategories(active);
+        if (active.length > 0) setActiveCat(active[0]._id);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (err) {
+      setCatError(err.message || 'Failed to load categories');
+      catFetchedRef.current = false; // allow retry
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  // ── Scroll ──
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  /* ── click outside ── */
+  // ── Click outside ──
   useEffect(() => {
     const fn = (e) => {
       const inNavbar = e.target.closest('[data-navbar]');
@@ -66,12 +108,12 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', fn);
   }, []);
 
-  /* ── auto-focus search ── */
+  // ── Auto-focus search ──
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) searchInputRef.current.focus();
   }, [isSearchOpen]);
 
-  /* ── Ctrl/Cmd + K ── */
+  // ── Ctrl/Cmd + K ──
   useEffect(() => {
     const fn = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -85,7 +127,7 @@ export default function Navbar() {
     return () => document.removeEventListener('keydown', fn);
   }, []);
 
-  /* ── resize ── */
+  // ── Resize ──
   useEffect(() => {
     const fn = () => {
       if (window.innerWidth >= 1024) setMobileOpen(false);
@@ -99,21 +141,22 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', fn);
   }, []);
 
-  /* ── Products dropdown ── */
+  // ── Products dropdown ──
   const handleDropEnter = () => {
     if (window.innerWidth < 1024) return;
     clearTimeout(dropLeaveTimer.current);
     setDropOpen(true);
+    fetchCategories();
   };
   const handleDropLeave = () => {
     dropLeaveTimer.current = setTimeout(() => setDropOpen(false), 200);
   };
 
-  /* ── More dropdown ── */
+  // ── More dropdown ──
   const openMoreDrop = () => { if (window.innerWidth >= 1024) { clearTimeout(moreTimerRef.current); setMoreDropOpen(true); } };
   const closeMoreDrop = () => { moreTimerRef.current = setTimeout(() => setMoreDropOpen(false), 150); };
 
-  /* ── Search ── */
+  // ── Search ──
   const handleSearchOpen = () => { setIsSearchOpen(true); setDropOpen(false); setMoreDropOpen(false); setSearchTerm(''); };
   const handleSearchClose = () => { setIsSearchOpen(false); setSearchTerm(''); };
   const handleSearchSubmit = () => {
@@ -124,7 +167,7 @@ export default function Navbar() {
     }
   };
 
-  /* ── Nav click ── */
+  // ── Nav click ──
   const handleNavClick = (link) => {
     setMobileOpen(false); setDropOpen(false); setMoreDropOpen(false); setIsSearchOpen(false);
     const currentPath = window.location.pathname;
@@ -137,10 +180,21 @@ export default function Navbar() {
     }
   };
 
-  const toggleMobileCat = (key) =>
+  const toggleMobileCat = (key) => {
+    if (key === 'products-top') {
+      fetchCategories();
+    }
     setMobileExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const mobileDrawerTop = 64;
+
+  // ── Helpers ──
+  const getActiveCatData = () => categories.find(c => c._id === activeCat);
+  const getCatIcon = (name) => CATEGORY_ICONS[name] || '🧬';
+  const getProductIcon = (product) => FALLBACK_PRODUCT_ICON;
+  const getCatSlug = (cat) => cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const getProductLink = (catSlug, product) => `/product/${product._id || product.name.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
     <>
@@ -392,60 +446,152 @@ export default function Navbar() {
 
                   {/* Body */}
                   <div className="flex max-h-[60vh]">
-                    {/* Category sidebar */}
-                    <div className="w-64 bg-slate-50 border-r border-slate-100 overflow-y-auto p-3">
-                      {Object.keys(CATEGORIES).map((cat) => {
-                        const isActive = activeCat === cat;
-                        return (
-                          <button
-                            key={cat}
-                            onClick={() => setActiveCat(cat)}
-                            onMouseEnter={() => setActiveCat(cat)}
-                            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl mb-1 text-xs transition
-                            ${isActive
-                                ? 'bg-gradient-to-r from-blue-900 to-blue-600 text-white font-semibold'
-                                : 'text-slate-600 hover:bg-white hover:text-blue-900'
-                              }`}
-                          >
-                            <span className="truncate">{cat}</span>
-                            <ChevronRight size={12} />
-                          </button>
-                        );
-                      })}
-                    </div>
+                    {/* Loading state */}
+                    {catLoading && (
+                      <div className="flex-1 flex items-center justify-center py-16">
+                        <div className="flex flex-col items-center gap-3">
+                          <Loader2 size={28} className="animate-spin text-blue-600" />
+                          <p className="text-sm text-slate-500">Loading products...</p>
+                        </div>
+                      </div>
+                    )}
 
-                    {/* Items grid */}
-                    <div className="flex-1 overflow-y-auto p-4">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={activeCat}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.2 }}
-                          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3"
-                        >
-                          {(CATEGORIES[activeCat] || []).map((item) => (
-                            <button
-                              key={item.name}
-                              onClick={() => { setDropOpen(false); navigate(item.link); }}
-                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50 transition text-left group"
-                            >
-                              <div className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg text-lg group-hover:bg-indigo-100">
-                                {item.icon}
-                              </div>
-                              <div className="flex flex-col flex-1">
-                                <p className="text-xs font-semibold text-blue-900">{item.name}</p>
-                                {item.subName && (
-                                  <p className="text-[10px] text-gray-500 leading-tight">{item.subName}</p>
-                                )}
-                              </div>
-                              <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition" />
-                            </button>
-                          ))}
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
+                    {/* Error state */}
+                    {catError && !catLoading && (
+                      <div className="flex-1 flex items-center justify-center py-16">
+                        <div className="flex flex-col items-center gap-3 text-center px-8">
+                          <p className="text-sm text-red-500 font-medium">Failed to load categories</p>
+                          <p className="text-xs text-slate-400">{catError}</p>
+                          <button
+                            onClick={() => { catFetchedRef.current = false; fetchCategories(); }}
+                            className="px-4 py-1.5 text-xs font-semibold text-blue-600 border border-blue-400 rounded-lg hover:bg-blue-50 transition"
+                          >
+                            Retry
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Loaded state */}
+                    {!catLoading && !catError && categories.length > 0 && (
+                      <>
+                        {/* Category sidebar */}
+                        <div className="w-64 bg-slate-50 border-r border-slate-100 overflow-y-auto p-3">
+                          {categories.map((cat) => {
+                            const isActive = activeCat === cat._id;
+                            return (
+                              <button
+                                key={cat._id}
+                                onClick={() => setActiveCat(cat._id)}
+                                onMouseEnter={() => setActiveCat(cat._id)}
+                                className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl mb-1 text-xs transition
+                                ${isActive
+                                    ? 'bg-gradient-to-r from-blue-900 to-blue-600 text-white font-semibold'
+                                    : 'text-slate-600 hover:bg-white hover:text-blue-900'
+                                  }`}
+                              >
+                                <div className="flex items-center gap-2 truncate">
+                                  <span>{getCatIcon(cat.name)}</span>
+                                  <span className="truncate">{cat.name}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  {cat.productCount > 0 && (
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                                      {cat.productCount}
+                                    </span>
+                                  )}
+                                  <ChevronRight size={12} />
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Items grid */}
+                        <div className="flex-1 overflow-y-auto p-4">
+                          <AnimatePresence mode="wait">
+                            {(() => {
+                              const catData = getActiveCatData();
+                              if (!catData) return null;
+                              const products = catData.products || [];
+
+                              return (
+                                <motion.div
+                                  key={activeCat}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  {products.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-40 text-center">
+                                      <span className="text-3xl mb-2">{getCatIcon(catData.name)}</span>
+                                      <p className="text-sm font-semibold text-slate-600">{catData.name}</p>
+                                      <p className="text-xs text-slate-400 mt-1">Products coming soon</p>
+                                      <button
+                                        onClick={() => { setDropOpen(false); navigate(`/products`); }}
+                                        className="mt-3 px-3 py-1.5 text-xs font-semibold text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition"
+                                      >
+                                        Explore Products
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+                                      {products.map((product) => (
+                                        <button
+                                          key={product._id}
+                                          onClick={() => { setDropOpen(false); navigate(getProductLink(getCatSlug(catData), product)); }}
+                                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50 transition text-left group"
+                                        >
+                                          {/* Product image or icon */}
+                                          <div className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg overflow-hidden group-hover:bg-indigo-100 flex-shrink-0">
+                                            {product.mainImage ? (
+                                              <img
+                                                src={product.mainImage}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover"
+                                                onError={e => {
+                                                  e.target.style.display = 'none';
+                                                  e.target.parentNode.innerHTML = `<span class="text-lg">${FALLBACK_PRODUCT_ICON}</span>`;
+                                                }}
+                                              />
+                                            ) : (
+                                              <span className="text-lg">{FALLBACK_PRODUCT_ICON}</span>
+                                            )}
+                                          </div>
+
+                                          <div className="flex flex-col flex-1 min-w-0">
+                                            <p className="text-xs font-semibold text-blue-900 truncate">{product.name}</p>
+                                            {product.brand?.name && (
+                                              <div className="flex items-center gap-1 mt-0.5">
+                                                
+                                                <p className="text-[10px] text-gray-500 leading-tight truncate">{product.brand.name}</p>
+                                              </div>
+                                            )}
+                                            
+                                          </div>
+
+                                          <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition flex-shrink-0" />
+                                        </button>
+                                      ))}
+
+                                      
+                                    </div>
+                                  )}
+                                </motion.div>
+                              );
+                            })()}
+                          </AnimatePresence>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Empty state */}
+                    {!catLoading && !catError && categories.length === 0 && (
+                      <div className="flex-1 flex items-center justify-center py-16">
+                        <p className="text-sm text-slate-400">No categories available</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Footer */}
@@ -516,23 +662,53 @@ export default function Navbar() {
                             transition={{ duration: 0.22 }}
                             className="overflow-hidden"
                           >
-                            {Object.entries(CATEGORIES).map(([cat, items]) => (
-                              <div key={cat}>
+                            {/* Mobile loading */}
+                            {catLoading && (
+                              <div className="flex items-center justify-center gap-2 py-6">
+                                <Loader2 size={18} className="animate-spin text-blue-600" />
+                                <span className="text-sm text-slate-500">Loading...</span>
+                              </div>
+                            )}
+
+                            {/* Mobile error */}
+                            {catError && !catLoading && (
+                              <div className="px-5 py-4 flex items-center justify-between">
+                                <span className="text-sm text-red-500">Failed to load</span>
                                 <button
-                                  onClick={() => toggleMobileCat(cat)}
+                                  onClick={() => { catFetchedRef.current = false; fetchCategories(); }}
+                                  className="text-xs text-blue-600 font-semibold"
+                                >
+                                  Retry
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Mobile categories */}
+                            {!catLoading && !catError && categories.map((cat) => (
+                              <div key={cat._id}>
+                                <button
+                                  onClick={() => toggleMobileCat(cat._id)}
                                   className="flex items-center justify-between w-full px-5 py-2.5
                                     bg-slate-50 border-b border-slate-100 cursor-pointer
                                     text-[11px] text-blue-600 font-bold tracking-widest uppercase text-left"
                                 >
-                                  {cat}
+                                  <div className="flex items-center gap-2">
+                                    <span>{getCatIcon(cat.name)}</span>
+                                    <span>{cat.name}</span>
+                                    {cat.productCount > 0 && (
+                                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-600 font-bold">
+                                        {cat.productCount}
+                                      </span>
+                                    )}
+                                  </div>
                                   <ChevronDown
                                     size={11}
-                                    className={`text-sky-400 transition-transform duration-200 ${mobileExpanded[cat] ? 'rotate-180' : ''}`}
+                                    className={`text-sky-400 transition-transform duration-200 ${mobileExpanded[cat._id] ? 'rotate-180' : ''}`}
                                   />
                                 </button>
 
                                 <AnimatePresence>
-                                  {mobileExpanded[cat] && (
+                                  {mobileExpanded[cat._id] && (
                                     <motion.div
                                       initial={{ height: 0, opacity: 0 }}
                                       animate={{ height: 'auto', opacity: 1 }}
@@ -540,23 +716,58 @@ export default function Navbar() {
                                       transition={{ duration: 0.16 }}
                                       className="overflow-hidden"
                                     >
-                                      {items.map(item => (
+                                      {cat.products && cat.products.length > 0 ? (
+                                        <>
+                                          {cat.products.map(product => (
+                                            <button
+                                              key={product._id}
+                                              onClick={() => { setMobileOpen(false); navigate(getProductLink(getCatSlug(cat), product)); }}
+                                              className="flex items-center gap-3 w-full px-6 py-3 bg-transparent
+                                                border-b border-slate-50 cursor-pointer text-left
+                                                hover:bg-indigo-50 transition-colors"
+                                            >
+                                              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                {product.mainImage ? (
+                                                  <img
+                                                    src={product.mainImage}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={e => {
+                                                      e.target.style.display = 'none';
+                                                      e.target.parentNode.innerHTML = `<span>${FALLBACK_PRODUCT_ICON}</span>`;
+                                                    }}
+                                                  />
+                                                ) : (
+                                                  <span>{FALLBACK_PRODUCT_ICON}</span>
+                                                )}
+                                              </div>
+                                              <div className="flex flex-col min-w-0">
+                                                <p className="text-sm font-semibold text-blue-900 leading-snug truncate">{product.name}</p>
+                                                {product.brand?.name && (
+                                                  <p className="text-xs text-slate-500 leading-tight">{product.brand.name}</p>
+                                                )}
+                                              </div>
+                                            </button>
+                                          ))}
+                                          {/* View all in category */}
+                                          <button
+                                            onClick={() => { setMobileOpen(false); navigate(`/products?category=${getCatSlug(cat)}`); }}
+                                            className="flex items-center gap-2 w-full px-6 py-2.5 bg-transparent
+                                              border-b border-slate-100 cursor-pointer text-left text-xs text-blue-500 font-semibold hover:bg-indigo-50 transition"
+                                          >
+                                            View all {cat.name} <ArrowRight size={11} />
+                                          </button>
+                                        </>
+                                      ) : (
                                         <button
-                                          key={item.name}
-                                          onClick={() => { setMobileOpen(false); navigate(item.link); }}
-                                          className="flex items-start gap-3 w-full px-6 py-3 bg-transparent
-                                            border-b border-slate-50 cursor-pointer text-left
-                                            hover:bg-indigo-50 transition-colors"
+                                          onClick={() => { setMobileOpen(false); navigate(`/products?category=${getCatSlug(cat)}`); }}
+                                          className="flex items-center gap-2 w-full px-6 py-3 bg-transparent
+                                            border-b border-slate-50 cursor-pointer text-left hover:bg-indigo-50 transition"
                                         >
-                                          <span className="text-lg w-7 text-center flex-shrink-0">{item.icon}</span>
-                                          <div className="flex flex-col">
-                                            <p className="text-sm font-semibold text-blue-900 leading-snug">{item.name}</p>
-                                            {item.subName && (
-                                              <p className="text-xs text-slate-500 leading-tight">{item.subName}</p>
-                                            )}
-                                          </div>
+                                          <p className="text-sm text-slate-500">Explore {cat.name}</p>
+                                          <ArrowRight size={12} className="ml-auto text-slate-400" />
                                         </button>
-                                      ))}
+                                      )}
                                     </motion.div>
                                   )}
                                 </AnimatePresence>
@@ -651,7 +862,7 @@ export default function Navbar() {
         <QuoteForm onClose={close} />
       </Modal>
 
-      {/* ✅ Spacer */}
+      {/* Spacer */}
       <div className="h-[64px] sm:h-[72px] lg:h-[80px]" />
     </>
   );

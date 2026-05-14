@@ -1,14 +1,219 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  Search, Filter, ChevronDown, ArrowRight, 
+import {
+  Search, Filter, ChevronDown, ArrowRight,
   MapPin, Phone, Mail, Star, CheckCircle,
   SlidersHorizontal, Grid3x3, List, X
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { CATEGORIES } from "./ProductsPage";
+
+/* ─── Product Data with Images ─── */
+const CATEGORIES = {
+  'Weighing & Measurement': [
+    {
+      name: 'Analytical Balances',
+      image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/analytical-balances',
+      brand: 'Sartorius',
+      description: 'High-precision analytical balances with 0.1mg readability',
+      featured: true,
+      rating: 4.9,
+      reviews: 128,
+      inStock: true,
+      price: '₹ 2,45,000'
+    },
+    {
+      name: 'Laboratory Balances',
+      image: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/laboratory-balances',
+      brand: 'Sartorius',
+      description: 'Versatile balances for everyday lab use',
+      featured: false,
+      rating: 4.7,
+      reviews: 86,
+      inStock: true,
+      price: '₹ 1,45,000'
+    },
+    {
+      name: 'Industrial Platform Scales',
+      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/industrial-scales',
+      brand: 'Smart Labtech',
+      description: 'Heavy-duty scales for industrial applications',
+      featured: false,
+      rating: 4.6,
+      reviews: 45,
+      inStock: true,
+      price: '₹ 3,75,000'
+    },
+    {
+      name: 'Weighing Indicators',
+      image: 'https://images.pexels.com/photos/3735757/pexels-photo-3735757.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/weighing-indicators',
+      brand: 'Smart Labtech',
+      description: 'Advanced indicators for process control',
+      featured: false,
+      rating: 4.5,
+      reviews: 32,
+      inStock: true,
+      price: '₹ 85,000'
+    },
+  ],
+  'Thermal Cooling': [
+    {
+      name: 'Climate Chambers',
+      image: 'https://images.pexels.com/photos/3735711/pexels-photo-3735711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/climate-chambers',
+      brand: 'Memmert',
+      description: 'Precise temperature and humidity control',
+      featured: true,
+      rating: 4.8,
+      reviews: 67,
+      inStock: true,
+      price: '₹ 5,50,000'
+    },
+    {
+      name: 'Drying Ovens',
+      image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/drying-ovens',
+      brand: 'Memmert',
+      description: 'Efficient drying and heating solutions',
+      featured: false,
+      rating: 4.7,
+      reviews: 54,
+      inStock: true,
+      price: '₹ 2,25,000'
+    },
+    {
+      name: 'Incubators',
+      image: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/incubators',
+      brand: 'Memmert',
+      description: 'Optimal conditions for cell growth',
+      featured: false,
+      rating: 4.8,
+      reviews: 92,
+      inStock: true,
+      price: '₹ 3,15,000'
+    },
+    {
+      name: 'ULT Freezers',
+      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/ult-freezers',
+      brand: 'Arctiko',
+      description: '-86°C storage for sensitive materials',
+      featured: true,
+      rating: 4.9,
+      reviews: 38,
+      inStock: false,
+      price: '₹ 8,75,000'
+    },
+  ],
+  'Chromatography': [
+    {
+      name: 'Gas Chromatography',
+      image: 'https://images.pexels.com/photos/3735757/pexels-photo-3735757.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/gas-chromatography',
+      brand: 'Scion',
+      description: 'High-performance GC systems',
+      featured: true,
+      rating: 4.8,
+      reviews: 52,
+      inStock: false,
+      price: '₹ 12,50,000'
+    },
+    {
+      name: 'Liquid Chromatography',
+      image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/liquid-chromatography',
+      brand: 'Waters',
+      description: 'UHPLC/HPLC for advanced separation',
+      featured: true,
+      rating: 4.9,
+      reviews: 73,
+      inStock: true,
+      price: '₹ 18,75,000'
+    },
+  ],
+  'Isolation & Safety': [
+    {
+      name: 'Biosafety Cabinets',
+      image: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/biosafety-cabinets',
+      brand: 'ESCO',
+      description: 'Protect personnel and samples',
+      featured: true,
+      rating: 4.9,
+      reviews: 61,
+      inStock: true,
+      price: '₹ 4,25,000'
+    },
+    {
+      name: 'Laminar Flow',
+      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/laminar-flow',
+      brand: 'ESCO',
+      description: 'Clean air workstations',
+      featured: false,
+      rating: 4.7,
+      reviews: 47,
+      inStock: true,
+      price: '₹ 2,95,000'
+    },
+    {
+      name: 'Fume Hoods',
+      image: 'https://images.pexels.com/photos/3735711/pexels-photo-3735711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/fume-hoods',
+      brand: 'ESCO',
+      description: 'Chemical fume extraction',
+      featured: false,
+      rating: 4.6,
+      reviews: 39,
+      inStock: true,
+      price: '₹ 3,45,000'
+    },
+  ],
+  'Laboratory Equipment': [
+    {
+      name: 'Centrifuges',
+      image: 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/centrifuges',
+      brand: 'Eppendorf',
+      description: 'Sample separation solutions',
+      featured: true,
+      rating: 4.8,
+      reviews: 95,
+      inStock: true,
+      price: '₹ 2,85,000'
+    },
+    {
+      name: 'pH Meters',
+      image: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/ph-meters',
+      brand: 'Mettler Toledo',
+      description: 'Accurate pH measurement',
+      featured: false,
+      rating: 4.7,
+      reviews: 71,
+      inStock: true,
+      price: '₹ 45,000'
+    },
+    {
+      name: 'Water Purification',
+      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2',
+      link: '/product/water-purification',
+      brand: 'Millipore',
+      description: 'Ultrapure water systems',
+      featured: true,
+      rating: 4.9,
+      reviews: 48,
+      inStock: true,
+      price: '₹ 3,95,000'
+    },
+  ],
+};
 
 /* ─── Google Fonts (only font import, no custom CSS classes) ─────────── */
 const FontLink = () => (
@@ -65,7 +270,7 @@ const CategoryProductsPage = () => {
     // Get all products
     const allProductsData = getAllProducts();
     setAllProducts(allProductsData);
-    
+
     // If categoryName exists, filter products by that category
     if (categoryName) {
       const decodedCategory = decodeURIComponent(categoryName);
@@ -85,11 +290,11 @@ const CategoryProductsPage = () => {
 
   // Filter and sort products
   const filteredProducts = products
-    .filter(product => 
+    .filter(product =>
       (selectedBrand === "All" || product.brand === selectedBrand) &&
       (product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       product.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortBy === "name") return a.name.localeCompare(b.name);
@@ -154,7 +359,7 @@ const CategoryProductsPage = () => {
                 {categoryTitle}
               </h1>
               <p className="text-white/70 mt-2 text-sm sm:text-base" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                {categoryName 
+                {categoryName
                   ? `Explore our complete range of ${categoryTitle.toLowerCase()} products`
                   : `Discover our complete range of laboratory equipment and instruments`}
               </p>
@@ -179,7 +384,7 @@ const CategoryProductsPage = () => {
       {/* Main Content */}
       <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 py-12 lg:py-16 bg-slate-50">
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* Sidebar - Categories */}
           <div className="lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-lg p-5 sticky top-24 border border-slate-100">
@@ -190,11 +395,10 @@ const CategoryProductsPage = () => {
               <div className="space-y-1">
                 <button
                   onClick={() => handleCategoryClick("All")}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
-                    selectedCategory === "All"
+                  className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-200 ${selectedCategory === "All"
                       ? "bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white"
                       : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
-                  }`}
+                    }`}
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
                   All Products
@@ -203,11 +407,10 @@ const CategoryProductsPage = () => {
                   <button
                     key={category}
                     onClick={() => handleCategoryClick(category)}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
-                      selectedCategory === category
+                    className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all duration-200 ${selectedCategory === category
                         ? "bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white"
                         : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
-                    }`}
+                      }`}
                     style={{ fontFamily: "'Outfit', sans-serif" }}
                   >
                     {category}
@@ -224,11 +427,10 @@ const CategoryProductsPage = () => {
                       <button
                         key={brand}
                         onClick={() => setSelectedBrand(brand)}
-                        className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${
-                          selectedBrand === brand
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${selectedBrand === brand
                             ? "text-blue-600 font-semibold bg-blue-50"
                             : "text-slate-500 hover:text-blue-600"
-                        }`}
+                          }`}
                         style={{ fontFamily: "'Outfit', sans-serif" }}
                       >
                         {brand}
@@ -245,7 +447,7 @@ const CategoryProductsPage = () => {
                   <p className="text-xs text-slate-500 mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
                     Can't find what you're looking for? Our experts are here to help.
                   </p>
-                  <button 
+                  <button
                     onClick={() => navigate('/contact')}
                     className="w-full bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white px-3 py-2 rounded-xl text-xs font-semibold hover:shadow-lg transition-all"
                   >
@@ -332,7 +534,7 @@ const CategoryProductsPage = () => {
                 <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold text-slate-800 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>No products found</h3>
                 <p className="text-slate-500 text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>Try adjusting your search or browse other categories</p>
-                <button 
+                <button
                   onClick={clearFilters}
                   className="mt-4 px-5 py-2 rounded-xl text-sm font-semibold text-white bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg transition-all"
                 >
@@ -343,7 +545,7 @@ const CategoryProductsPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredProducts.map((product, index) => (
                   <Reveal key={index} delay={index * 0.05}>
-                    <div 
+                    <div
                       onClick={() => navigate(product.link)}
                       className="group bg-white rounded-2xl overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100"
                     >
@@ -439,7 +641,7 @@ const CategoryProductsPage = () => {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button 
+                <button
                   onClick={() => navigate('/contact')}
                   className="relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-blue-900 bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-blue-100 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
                   style={{ fontFamily: "'Outfit', sans-serif" }}

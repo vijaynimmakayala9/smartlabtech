@@ -1,13 +1,7 @@
-import { useRef, useState } from 'react';
+// Contact.jsx
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
-
-const CONTACT_INFO = [
-  { icon: MapPin, label: 'Address',        value: '402, Tech Park, Madhapur\nHyderabad, Telangana 500081', color: 'text-blue-900',  bg: 'bg-blue-900/[0.07]',  border: 'hover:border-blue-900' },
-  { icon: Phone,  label: 'Phone',          value: '+91 40 6789 1234\n+91 98765 00011',                      color: 'text-sky-600',   bg: 'bg-sky-600/[0.07]',   border: 'hover:border-sky-600'  },
-  { icon: Mail,   label: 'Email',          value: 'info@smartlabtech.in\nsales@smartlabtech.in',            color: 'text-sky-500',   bg: 'bg-sky-500/[0.07]',   border: 'hover:border-sky-500'  },
-  { icon: Clock,  label: 'Business Hours', value: 'Mon – Sat: 9:00 AM – 6:00 PM\nSunday: Closed',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' },
-];
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, ChevronDown, Loader2 } from 'lucide-react';
 
 function Reveal({ children, delay = 0 }) {
   const ref = useRef(null);
@@ -24,11 +18,75 @@ function Reveal({ children, delay = 0 }) {
   );
 }
 
+// Hook to fetch contact info from API
+function useContactInfo() {
+  const [contactInfo, setContactInfo] = useState({
+    phones: [],
+    emails: [],
+    addresses: [],
+    fullAddresses: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contact-info');
+        const json = await res.json();
+        if (json.success && json.data) {
+          setContactInfo({
+            phones: json.data.phones || [],
+            emails: json.data.emails || [],
+            addresses: json.data.address || [],
+            fullAddresses: json.data.fullAddress || []
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch contact info:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContactInfo();
+  }, []);
+
+  return { contactInfo, loading, error };
+}
+
 export default function Contact({ id }) {
   const [form, setForm]           = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [errors, setErrors]       = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading]     = useState(false);
+  const [apiError, setApiError]   = useState('');
+
+  // ── Subjects from API ──
+  const [subjects, setSubjects]         = useState([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(false);
+
+  // ── Contact Info from API ──
+  const { contactInfo, loading: contactLoading, error: contactError } = useContactInfo();
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      setSubjectsLoading(true);
+      try {
+        const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contacts/subjects');
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          setSubjects(json.data.filter(s => s.isActive).sort((a, b) => a.sortOrder - b.sortOrder));
+        }
+      } catch {
+        // silently fallback — subjects just won't populate
+      } finally {
+        setSubjectsLoading(false);
+      }
+    };
+    fetchSubjects();
+  }, []);
 
   const validate = () => {
     const e = {};
@@ -39,12 +97,32 @@ export default function Contact({ id }) {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
+    setApiError('');
+    try {
+      const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contacts/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          subject: form.subject || undefined,
+          message: form.message.trim(),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Submission failed');
+      setSubmitted(true);
+    } catch (err) {
+      setApiError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputBase =
@@ -52,6 +130,40 @@ export default function Contact({ id }) {
 
   const inputCls = (field) =>
     `${inputBase} ${errors[field] ? 'border-red-400' : 'border-slate-200'}`;
+
+  // Helper to get display phone numbers
+  const getPhoneDisplay = () => {
+    if (contactLoading) return 'Loading...';
+    if (contactError || contactInfo.phones.length === 0) {
+      return '+91 40 6789 1234\n+91 98765 00011';
+    }
+    return contactInfo.phones.join('\n');
+  };
+
+  // Helper to get display emails
+  const getEmailDisplay = () => {
+    if (contactLoading) return 'Loading...';
+    if (contactError || contactInfo.emails.length === 0) {
+      return 'info@smartlabtech.in\nsales@smartlabtech.in';
+    }
+    return contactInfo.emails.join('\n');
+  };
+
+  // Helper to get display address
+  const getAddressDisplay = () => {
+    if (contactLoading) return 'Loading address...';
+    if (contactError || contactInfo.fullAddresses.length === 0) {
+      return '402, Tech Park, Madhapur\nHyderabad, Telangana 500081';
+    }
+    return contactInfo.fullAddresses[0];
+  };
+
+  const CONTACT_INFO = [
+    { icon: MapPin, label: 'Address',        value: getAddressDisplay(), color: 'text-blue-900',  bg: 'bg-blue-900/[0.07]',  border: 'hover:border-blue-900' },
+    { icon: Phone,  label: 'Phone',          value: getPhoneDisplay(),   color: 'text-sky-600',   bg: 'bg-sky-600/[0.07]',   border: 'hover:border-sky-600'  },
+    { icon: Mail,   label: 'Email',          value: getEmailDisplay(),   color: 'text-sky-500',   bg: 'bg-sky-500/[0.07]',   border: 'hover:border-sky-500'  },
+    { icon: Clock,  label: 'Business Hours', value: 'Mon – Sat: 9:00 AM – 6:00 PM\nSunday: Closed',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' },
+  ];
 
   return (
     <section id={id} className="bg-slate-50 py-12 sm:py-12 lg:py-12">
@@ -96,7 +208,7 @@ export default function Contact({ id }) {
                 ))}
               </div>
 
-              {/* Map — grows to fill remaining left-column height */}
+              {/* Map */}
               <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-md flex-1 min-h-52 sm:min-h-64 lg:min-h-0 relative">
                 <div className="absolute inset-0 z-10 pointer-events-none rounded-2xl ring-1 ring-inset ring-slate-200/50" />
                 <iframe
@@ -141,6 +253,7 @@ export default function Contact({ id }) {
                         setSubmitted(false);
                         setForm({ name: '', email: '', phone: '', subject: '', message: '' });
                         setErrors({});
+                        setApiError('');
                       }}
                       className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-900 to-sky-500 hover:opacity-90 transition-opacity"
                     >
@@ -187,17 +300,29 @@ export default function Contact({ id }) {
                       {errors.email && <span className="text-[11px] text-red-400 mt-1 block">{errors.email}</span>}
                     </div>
 
-                    {/* Subject */}
-                    <select
-                      value={form.subject}
-                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className={`${inputBase} border-slate-200 cursor-pointer`}
-                    >
-                      <option value="">Select Subject</option>
-                      {['Product Enquiry', 'Get a Quote', 'Service Request', 'Technical Support', 'Partnership', 'Other'].map((o) => (
-                        <option key={o} value={o}>{o}</option>
-                      ))}
-                    </select>
+                    {/* Subject — from API */}
+                    <div className="relative">
+                      {subjectsLoading ? (
+                        <div className={`${inputBase} border-slate-200 flex items-center gap-2 text-slate-400`}>
+                          <Loader2 size={14} className="animate-spin" />
+                          <span>Loading subjects...</span>
+                        </div>
+                      ) : (
+                        <>
+                          <select
+                            value={form.subject}
+                            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                            className={`${inputBase} border-slate-200 cursor-pointer appearance-none pr-9`}
+                          >
+                            <option value="">Select Subject</option>
+                            {subjects.map((s) => (
+                              <option key={s._id} value={s.name}>{s.name}</option>
+                            ))}
+                          </select>
+                          <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                        </>
+                      )}
+                    </div>
 
                     {/* Message */}
                     <div className="flex flex-col flex-1">
@@ -210,6 +335,11 @@ export default function Contact({ id }) {
                       />
                       {errors.message && <span className="text-[11px] text-red-400 mt-1 block">{errors.message}</span>}
                     </div>
+
+                    {/* API error */}
+                    {apiError && (
+                      <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{apiError}</p>
+                    )}
 
                     {/* Submit */}
                     <button
