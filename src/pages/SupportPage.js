@@ -234,7 +234,7 @@ export default function Support() {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none bg-gradient-to-bl from-sky-500/10 to-transparent rounded-full blur-3xl" />
 
         {/* Content */}
-        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center h-full"
+        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center min-h-[clamp(580px,85vh,820px)]"
           style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}>
 
           {/* Eyebrow */}
@@ -269,7 +269,7 @@ export default function Support() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.22 }}
-            className="text-base sm:text-lg leading-relaxed mb-10 max-w-lg text-white/80" style={{ fontFamily: "'Outfit', sans-serif" }}
+            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-center text-white/80" style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             Our team of experienced, factory-trained, certified service technicians are committed to support your service needs across India.
           </motion.p>
@@ -392,38 +392,6 @@ export default function Support() {
               </div>
             </Reveal>
           </div>
-        </div>
-      </section>
-
-      {/* Smart Application Lab Section - Premium gradient */}
-      <section className="py-16 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)]">
-        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              <FlaskConical size={12} /> Smart Application Lab
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Step into Our{' '}
-              <span className="bg-gradient-to-r from-sky-200 to-blue-200 bg-clip-text text-transparent">Application Lab</span>
-            </h2>
-            <p className="text-white/80 max-w-2xl mx-auto" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Newly expanded and redesigned, staffed with a team of leading experts — the place where we make ideas happen.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {APPLAB_SERVICES.map((service, i) => (
-              <AppLabCard key={service.title} service={service} index={i} />
-            ))}
-          </div>
-
-          <Reveal className="mt-10">
-            <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20">
-              <p className="text-white/90 text-center text-sm leading-relaxed" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                At our Application Lab, customers can participate in training sessions, demonstrations and customization exercises through a series of interactive sessions, presentations, and sample preparation designed to address their unique needs.
-              </p>
-            </div>
-          </Reveal>
         </div>
       </section>
 

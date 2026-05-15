@@ -2,79 +2,65 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import analytics from "../assets/sartorius.jpeg";
-// import analytics from "../assets/sartorius1.png";
-
-// const analytics = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=900&q=80";
-
-const SLIDES = [
-  {
-    headline: "Advanced Laboratory Equipment",
-    sub: "You've come to the right place!",
-    img: analytics,
-    badge: "ISO 9001:2015 Certified",
-    accent: "from-blue-900 to-sky-500",
-  },
-  {
-    headline: "Precision Scientific Instruments",
-    sub: "You've come to the right place!",
-    img: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=900&q=80",
-    badge: "Serving 500+ Institutions",
-    accent: "from-blue-900 to-sky-500",
-  },
-  {
-    headline: "Reliable Research Solutions",
-    sub: "You've come to the right place!",
-    img: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=900&q=80",
-    badge: "20+ Years of Trust",
-    accent: "from-blue-900 to-sky-500",
-  },
-];
 
 const smoothScrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
 export default function Hero({ id }) {
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [displayText, setDisplayText] = useState("");
   const [isPaused, setIsPaused] = useState(false);
 
-  // ✅ FIX: Store `current` in a ref so the interval callback always reads
-  //    the latest value without being listed as a dependency.
   const currentRef = useRef(current);
   useEffect(() => { currentRef.current = current; }, [current]);
 
   const navigate = useNavigate();
 
-  const next = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % SLIDES.length);
+  // Fetch hero slides from API
+  useEffect(() => {
+    fetch("https://smartlabtechbackend-p5h6.onrender.com/api/homepage/hero")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data.length > 0) {
+          setSlides(json.data.filter((s) => s.isActive));
+        }
+      })
+      .catch((err) => console.error("Hero API error:", err))
+      .finally(() => setLoading(false));
   }, []);
 
+  const next = useCallback(() => {
+    if (!slides.length) return;
+    setDirection(1);
+    setCurrent((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
   const prev = useCallback(() => {
+    if (!slides.length) return;
     setDirection(-1);
-    setCurrent((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
-  }, []);
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
 
   const go = useCallback((i) => {
     setDirection(i > currentRef.current ? 1 : -1);
     setCurrent(i);
   }, []);
 
-  // ✅ FIX: Only depends on [isPaused, next] — interval is NOT reset on every
-  //    slide change, so manual navigation doesn't restart the 5s timer.
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !slides.length) return;
     const id = setInterval(next, 5000);
     return () => clearInterval(id);
-  }, [isPaused, next]);
+  }, [isPaused, next, slides.length]);
 
   // Typing effect
   useEffect(() => {
+    if (!slides.length) return;
     let i = 0;
-    const text = SLIDES[current].headline;
+    const text = slides[current]?.title || "";
     setDisplayText("");
     const typing = setInterval(() => {
       setDisplayText(text.slice(0, i + 1));
@@ -82,9 +68,20 @@ export default function Hero({ id }) {
       if (i === text.length) clearInterval(typing);
     }, 38);
     return () => clearInterval(typing);
-  }, [current]);
+  }, [current, slides]);
 
-  const slide = SLIDES[current];
+  if (loading) {
+    return (
+      <section id={id} className="relative flex items-center bg-gradient-to-br from-blue-50 via-white to-blue-50 overflow-hidden min-h-[400px] justify-center">
+        <div className="w-10 h-10 rounded-full border-4 border-sky-400 border-t-transparent animate-spin" />
+      </section>
+    );
+  }
+
+  if (!slides.length) return null;
+
+  const slide = slides[current];
+  const accent = "from-blue-900 to-sky-500";
   const words = displayText.split(" ");
   const firstWord = words[0] ?? "";
   const restWords = words.slice(1).join(" ");
@@ -120,8 +117,8 @@ export default function Hero({ id }) {
               <AnimatePresence mode="wait">
                 <motion.img
                   key={current}
-                  src={slide.img}
-                  alt={slide.headline}
+                  src={slide.image}
+                  alt={slide.title}
                   initial={{ scale: 1.06, opacity: 0, x: direction > 0 ? 30 : -30 }}
                   animate={{ scale: 1, opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: direction > 0 ? -30 : 30 }}
@@ -133,11 +130,11 @@ export default function Hero({ id }) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-black/40 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10">
-                {current + 1} / {SLIDES.length}
+                {current + 1} / {slides.length}
               </div>
 
               <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex gap-2 z-10">
-                {SLIDES.map((_, i) => (
+                {slides.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => go(i)}
@@ -183,7 +180,7 @@ export default function Hero({ id }) {
                 className="inline-flex items-center gap-2 px-3 py-1.5 mb-4 sm:mb-5 rounded-full bg-sky-100 text-sky-700 text-xs font-semibold"
               >
                 <span className="w-2 h-2 bg-sky-500 rounded-full animate-pulse shrink-0" />
-                {slide.badge}
+                {slide.tag}
               </motion.div>
             </AnimatePresence>
 
@@ -201,7 +198,7 @@ export default function Hero({ id }) {
                 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl xl:text-5xl font-extrabold text-slate-900 leading-tight mb-3 sm:mb-4"
               >
                 <span className="block">{firstWord}</span>
-                <span className={`bg-gradient-to-r ${slide.accent} bg-clip-text text-transparent`}>
+                <span className={`bg-gradient-to-r ${accent} bg-clip-text text-transparent`}>
                   {restWords}
                 </span>
               </motion.h1>
@@ -216,14 +213,14 @@ export default function Hero({ id }) {
                 transition={{ duration: 0.4, delay: 0.1 }}
                 className="text-slate-500 max-w-xs sm:max-w-sm md:max-w-md mb-6 sm:mb-7 text-sm sm:text-base leading-relaxed"
               >
-                {slide.sub}
+                You&apos;ve come to the right place!
               </motion.p>
             </AnimatePresence>
 
             <div className="flex flex-col xs:flex-row flex-wrap gap-3 w-full sm:w-auto">
               <button
                 onClick={() => smoothScrollTo("contact")}
-                className={`flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 rounded-xl bg-gradient-to-r ${slide.accent} text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-sky-300/50 hover:scale-105 active:scale-95 transition-all duration-150 w-full xs:w-auto focus:outline-none focus:ring-2 focus:ring-sky-400`}
+                className={`flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 rounded-xl bg-gradient-to-r ${accent} text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-sky-300/50 hover:scale-105 active:scale-95 transition-all duration-150 w-full xs:w-auto focus:outline-none focus:ring-2 focus:ring-sky-400`}
               >
                 Get a Quote <ArrowRight size={16} />
               </button>
@@ -237,7 +234,7 @@ export default function Hero({ id }) {
             </div>
 
             <div className="flex gap-2 mt-6 sm:hidden">
-              {SLIDES.map((_, i) => (
+              {slides.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => go(i)}
