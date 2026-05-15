@@ -15,7 +15,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FALLBACK_IMAGE from '../assets/fallbackimage.png';
 
-const API_BASE = "https://smartlabtechbackend-p5h6.onrender.com";
+const API_BASE = "http://31.97.228.17:5101";
 
 /* ─── Helpers ─── */
 const getImageUrl = (path) => {

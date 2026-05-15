@@ -28,7 +28,7 @@ const MORE_LINKS = [
   { name: 'Support', icon: <HelpCircle size={14} />, link: '/support' },
   { name: 'Resources', icon: <BookOpen size={14} />, link: '/resources' },
   { name: 'Blogs', icon: <FileText size={14} />, link: '/blogs' },
-  { name: 'Career', icon: <Briefcase size={14} />, link: '/career' },
+  // { name: 'Career', icon: <Briefcase size={14} />, link: '/career' },
 ];
 
 const NAV_H = 80;
@@ -68,7 +68,7 @@ export default function Navbar() {
     setCatLoading(true);
     setCatError(null);
     try {
-      const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/categories/with-products');
+      const res = await fetch('http://31.97.228.17:5101/api/categories/with-products');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
