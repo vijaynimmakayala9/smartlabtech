@@ -13,7 +13,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import fallbackImage from '../assets/fallbackimage.png';
 
-const API_BASE = "http://31.97.228.17:5101";
+const API_BASE = "https://smartlabtechbackend-p5h6.onrender.com";
 
 const stats = [
   { value: "500+", label: "Products", icon: PackageIcon },

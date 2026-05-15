@@ -94,7 +94,7 @@ export function QueryForm({ onClose }) {
     const fetchSubjects = async () => {
       setSubjectsLoading(true);
       try {
-        const res = await fetch('http://31.97.228.17:5101/api/contacts/subjects');
+        const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contacts/subjects');
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
           setSubjects(
@@ -139,7 +139,7 @@ export function QueryForm({ onClose }) {
 
     try {
       const res = await fetch(
-        "http://31.97.228.17:5101/api/contacts/submit",
+        "https://smartlabtechbackend-p5h6.onrender.com/api/contacts/submit",
         {
           method: "POST",
           headers: {

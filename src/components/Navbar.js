@@ -68,7 +68,7 @@ export default function Navbar() {
     setCatLoading(true);
     setCatError(null);
     try {
-      const res = await fetch('http://31.97.228.17:5101/api/categories/with-products');
+      const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/categories/with-products');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
