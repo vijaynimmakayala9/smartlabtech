@@ -510,13 +510,13 @@ const ProductDetails = () => {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-wrap gap-3 mb-6 sm:mb-8">
-                  <button onClick={() => smoothScrollTo("contact")}
+                  <button onClick={() => setOpenContact(true)}
                     className="flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-700 to-sky-500 text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all text-sm sm:text-base glow-effect focus:outline-none focus:ring-2 focus:ring-sky-400">
                     <Mail size={16} />Contact Us
                   </button>
-                  <button onClick={() => smoothScrollTo("contact")}
+                  <button onClick={() => setOpenQuote(true)}
                     className="flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border-2 border-blue-600 text-blue-700 font-semibold rounded-xl hover:bg-blue-50 active:bg-blue-100 transition-all text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <Phone size={16} />Request a Quote
+                    <FileText size={16} />Request a Quote
                   </button>
                 </div>
 
@@ -852,19 +852,10 @@ const ProductDetails = () => {
                             {item.inStock ? 'In Stock' : 'MTO'}
                           </span>
                         </div>
-                        {(item.discountedPrice || item.price) && (
-                          <p className="text-base font-serif font-bold text-slate-900 mb-3">
-                            ₹ {(item.discountedPrice || item.price).toLocaleString('en-IN')}
-                          </p>
-                        )}
                         <div className="flex gap-2">
                           <button onClick={e => { e.stopPropagation(); navigate(`/product/${item._id}`); }}
                             className="flex-1 py-2 bg-gradient-to-r from-blue-700 to-sky-500 text-white text-xs font-semibold rounded-lg hover:shadow-md transition flex items-center justify-center gap-1">
                             View Details <ArrowRight size={12} />
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }}
-                            className="px-3 py-2 border border-blue-200 text-blue-700 text-xs font-semibold rounded-lg hover:bg-blue-50 transition flex items-center justify-center">
-                            <Mail size={12} />
                           </button>
                         </div>
                       </div>
@@ -875,38 +866,6 @@ const ProductDetails = () => {
             </div>
           </section>
         )}
-
-        {/* ── CTA Banner ── */}
-        <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-8xl mx-auto">
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden">
-              <img src={galleryImages[0] || FALLBACK_IMAGE} alt="Laboratory"
-                className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 blue-overlay" />
-              <div className="relative z-10 p-8 sm:p-12 md:p-16 text-center">
-                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                  <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-3 sm:mb-4">
-                    Ready to Elevate Your Laboratory?
-                  </h2>
-                  <p className="text-white/90 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
-                    Get personalised consultation and exclusive pricing for your requirements. Our experts are ready to help.
-                  </p>
-                  <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
-                    <button onClick={() => setOpenContact(true)} className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-blue-700 font-semibold rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm sm:text-base">
-                      <Mail size={16} />Contact Us
-                    </button>
-                    <button onClick={() => setOpenQuote(true)} className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
-                      <Phone size={16} />Request Callback
-                    </button>
-                    {/* <button className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
-                      <FileText size={16} />Download Datasheet
-                    </button> */}
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Back to Top */}
         <AnimatePresence>

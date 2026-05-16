@@ -16,14 +16,17 @@ import SideButtons from './components/SideButton.js';
 import SearchBar from './components/SearchBar.js';
 import SearchResults from './pages/SearchPage.js';
 import AdminPanel from './pages/AdminPannel.js';
+import PrivacyPolicy from './Policies/PrivacyPolicy.js';
+import TermsOfService from './Policies/TermsOfService.js';
+import CookiePolicy from './Policies/CookiePolicy.js';
 
 const App = () => {
   return (
     <>
-    <SideButtons />
+      <SideButtons />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path='/products' element={<ProductsPage/>}/>
+        <Route path='/products' element={<ProductsPage />} />
         <Route path='/category' element={<CategoryProductsPage />} />
         <Route path='/category/:categoryName' element={<CategoryProductsPage />} />
         <Route path='/product/:productId' element={<ProductDetails />} />
@@ -31,12 +34,16 @@ const App = () => {
         <Route path='/services' element={<ServicesPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/blogs' element={<BlogsPage />} />
-        <Route path='/blogDetails/:id' element={<BlogDetailsPage />} />
+        <Route path='/blog/:slug' element={<BlogDetailsPage />} />
         <Route path='/career' element={<Careers />} />
         <Route path='/support' element={<Support />} />
         <Route path='/resources' element={<ResourcesPage />} />
         <Route path='/search' element={<SearchResults />} />
         <Route path='/admin' element={<AdminPanel />} />
+
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
       </Routes>
     </>
   )

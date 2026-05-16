@@ -237,17 +237,7 @@ const ProductCard = ({ product, viewMode, index }) => {
 
         {(product.price || product.discountedPrice) && (
           <div className="flex items-end justify-between">
-            <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
-              <div className="flex items-center gap-2">
-                <p className="text-lg font-serif font-bold text-slate-900">
-                  ₹ {(product.discountedPrice || product.price).toLocaleString('en-IN')}
-                </p>
-                {product.discountedPrice && product.price && (
-                  <p className="text-xs text-slate-400 line-through">₹ {product.price.toLocaleString('en-IN')}</p>
-                )}
-              </div>
-            </div>
+            
             <div className="flex items-center gap-1.5">
               <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
               <span className="text-[10px] text-slate-500">{product.inStock ? 'In Stock' : 'On Order'}</span>
@@ -400,20 +390,7 @@ const ProductsPage = () => {
                 </p>
               </motion.div>
 
-              {/* Stats Cards */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex gap-3"
-              >
-                {stats.slice(0, 3).map((stat, i) => (
-                  <div key={i} className="bg-white rounded-xl px-4 py-3 shadow-sm border border-slate-200 text-center min-w-[80px]">
-                    <p className="font-serif text-xl font-bold text-slate-900">{stat.value}</p>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">{stat.label}</p>
-                  </div>
-                ))}
-              </motion.div>
+              
             </div>
 
             {/* Search & Filters */}
