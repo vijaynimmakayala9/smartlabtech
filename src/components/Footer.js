@@ -1,231 +1,212 @@
+// src/components/Footer.js
+import React, { useState, useEffect } from 'react';
 import {
   FlaskConical,
   Mail,
   Phone,
   MapPin,
-  ArrowRight
+  ArrowRight,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube
 } from 'lucide-react';
-
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaInstagram,
-  FaYoutube
-} from 'react-icons/fa';
-
 import { useNavigate } from "react-router-dom";
-
-const FOOTER_LINKS = {
-  Products: [
-    'Microscopes',
-    'Spectrometers',
-    'Centrifuges',
-    'Balances',
-    'Incubators',
-    'Smart Lab Systems'
-  ],
-
-  Services: [
-    'Equipment Supply',
-    'Installation & Calibration',
-    'Maintenance (AMC)',
-    'Scientific Consulting',
-    'Quality Validation',
-    'Training Programs'
-  ],
-
-  Company: [
-    'About Us',
-    'Services',
-    'Blogs',
-    'Resourses',
-    'Products'
-  ],
-
-  Support: [
-    'Get a Quote',
-    'Contact Us',
-    'Support',
-    // 'Careers'
-  ],
-};
-
-const FOOTER_ROUTES = {
-  // Products
-  Microscopes: "/products",
-  Spectrometers: "/products",
-  Centrifuges: "/products",
-  Balances: "/products",
-  Incubators: "/products",
-  "Smart Lab Systems": "/products",
-
-  // Services
-  "Equipment Supply": "/services",
-  "Installation & Calibration": "/services",
-  "Maintenance (AMC)": "/services",
-  "Scientific Consulting": "/services",
-  "Quality Validation": "/services",
-  "Training Programs": "/services",
-
-  // Company
-  "About Us": "/about",
-  Services: "/services",
-  Blogs: "/blogs",
-  Resourses: "/resources",
-  Products: "/products",
-
-  // Support
-  "Get a Quote": "/contact",
-  "Contact Us": "/contact",
-  Support: "/support",
-  // Careers: "/career",
-
-  // Bottom
-  "Privacy Policy": "/privacy-policy",
-  "Terms of Service": "/terms",
-  "Cookie Policy": "/cookies",
-};
+import { FaLinkedin, FaTwitter, FaInstagram, FaYoutube, FaFacebook } from 'react-icons/fa';
 
 export default function Footer({ id }) {
-
   const navigate = useNavigate();
+  const [footerData, setFooterData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFooter();
+  }, []);
+
+  const fetchFooter = async () => {
+    try {
+      const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/footer');
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setFooterData(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching footer:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Default footer links structure
+  const defaultFooterLinks = {
+    Products: [
+      { name: 'Microscopes', path: '/products' },
+      { name: 'Spectrometers', path: '/products' },
+      { name: 'Centrifuges', path: '/products' },
+      { name: 'Balances', path: '/products' },
+      { name: 'Incubators', path: '/products' },
+      { name: 'Smart Lab Systems', path: '/products' }
+    ],
+    Services: [
+      { name: 'Equipment Supply', path: '/services' },
+      { name: 'Installation & Calibration', path: '/services' },
+      { name: 'Maintenance (AMC)', path: '/services' },
+      { name: 'Scientific Consulting', path: '/services' },
+      { name: 'Quality Validation', path: '/services' },
+      { name: 'Training Programs', path: '/services' }
+    ],
+    Company: [
+      { name: 'About Us', path: '/about' },
+      { name: 'Services', path: '/services' },
+      { name: 'Blogs', path: '/blogs' },
+      { name: 'Products', path: '/products' }
+    ],
+    Support: [
+      { name: 'Get a Quote', path: '/contact' },
+      { name: 'Contact Us', path: '/contact' },
+      { name: 'Support', path: '/support' }
+    ]
+  };
+
+  // Get footer links from API or use defaults
+  const getFooterLinks = () => {
+    if (!footerData) return defaultFooterLinks;
+
+    const links = {
+      Products: [],
+      Services: [],
+      Company: [
+        { name: 'About Us', path: '/about' },
+        { name: 'Services', path: '/services' },
+        { name: 'Blogs', path: '/blogs' },
+        { name: 'Products', path: '/products' },
+        { name: 'Resourses', path: '/resources'}
+      ],
+      Support: [
+        { name: 'Get a Quote', path: '/contact' },
+        { name: 'Contact Us', path: '/contact' },
+        { name: 'Support', path: '/support' }
+      ]
+    };
+
+    // Add products from API
+    if (footerData.products && footerData.products.length > 0) {
+      links.Products = footerData.products.map(product => ({
+        name: product.name,
+        path: `/products/${product.productId?._id || product.productId}`,
+        slug: product.productId?.slug
+      }));
+    } else {
+      links.Products = defaultFooterLinks.Products;
+    }
+
+    // Add services from API
+    if (footerData.services && footerData.services.length > 0) {
+      links.Services = footerData.services.map(service => ({
+        name: service.name,
+        path: '/services'
+      }));
+    } else {
+      links.Services = defaultFooterLinks.Services;
+    }
+
+    return links;
+  };
+
+  const footerLinks = getFooterLinks();
+
+  // Social media icons mapping
+  const socialLinks = [
+    { icon: FaFacebook, url: footerData?.socialMedia?.facebook || 'https://facebook.com', color: '#1877f2' },
+    { icon: FaTwitter, url: footerData?.socialMedia?.twitter || 'https://twitter.com', color: '#1da1f2' },
+    { icon: FaInstagram, url: footerData?.socialMedia?.instagram || 'https://instagram.com', color: '#e4405f' },
+    { icon: FaLinkedin, url: footerData?.socialMedia?.linkedin || 'https://linkedin.com', color: '#0077b5' },
+    { icon: FaYoutube, url: footerData?.socialMedia?.youtube || 'https://youtube.com', color: '#ff0000' }
+  ].filter(social => social.url);
+
+  // Get company contact info
+  const companyContact = footerData?.companyContact || {
+    mobileNumber: '+91 40 6789 1234',
+    email: 'info@smartlabtech.in',
+    location: 'Hyderabad, Telangana, India'
+  };
+
+  // Get company description
+  const companyDescription = footerData?.companyDescription || 
+    "Precision instruments and scientific solutions for research, pharma, and education since 2004.";
+
+  // Get copyright text
+  const copyrightText = footerData?.copyrightText || `© ${new Date().getFullYear()} SmartLabTech Pvt. Ltd. All rights reserved.`;
+
+  // Handle navigation
+  const handleNavigate = (path) => {
+    if (path) navigate(path);
+  };
+
+  if (loading) {
+    return (
+      <footer id={id} className="bg-slate-900 text-slate-200 pt-[72px]">
+        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 py-12">
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-slate-700 rounded w-3/4"></div>
+            <div className="h-4 bg-slate-700 rounded w-1/2"></div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer id={id} className="bg-slate-900 text-slate-200 pt-[72px]">
-
       <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
-
-        {/* Newsletter */}
-        <div
-          className="rounded-2xl p-6 sm:p-9 flex flex-wrap items-center justify-between gap-5 mb-14"
-          style={{
-            background:
-              'linear-gradient(135deg,#1e3a8a,#1d4ed8,#0369a1)',
-            boxShadow:
-              '0 8px 32px rgba(30,58,138,0.35)'
-          }}
-        >
-
-          <div>
-            <h3
-              className="font-display font-bold text-white mb-1.5"
-              style={{
-                fontSize: 'clamp(18px,2vw,24px)'
-              }}
-            >
-              Stay Updated with SmartLabTech
-            </h3>
-
-            <p className="text-sm text-white/65 font-body">
-              Subscribe for product launches, technical insights, and industry news.
-            </p>
-          </div>
-
-          <div className="flex min-w-[280px] sm:min-w-[320px]">
-
-            <input
-              placeholder="Enter your email..."
-              className="flex-1 bg-white/10 border border-white/20 border-r-0 rounded-l-lg text-white placeholder-white/50 px-4 py-3 text-sm font-body outline-none"
-            />
-
-            <button
-              className="flex items-center gap-1.5 px-5 py-3 rounded-r-lg bg-white text-blue-900 text-sm font-bold font-body border-none cursor-pointer whitespace-nowrap transition-colors"
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = '#e0f2fe')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = '#fff')
-              }
-            >
-              Subscribe <ArrowRight size={14} />
-            </button>
-
-          </div>
-        </div>
-
         {/* Main Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 mb-12">
-
-          {/* Brand */}
+          {/* Brand Section */}
           <div className="col-span-2">
-
             {/* Logo */}
             <div className="flex items-center gap-2.5 mb-4">
-
               <img
                 src="/logo.png"
                 alt="SmartLabTech"
                 className="w-9 h-9 object-contain rounded-lg"
                 onError={(e) => {
                   e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
+                  if (e.target.nextSibling) {
+                    e.target.nextSibling.style.display = 'flex';
+                  }
                 }}
               />
-
               <div
                 className="hidden w-9 h-9 items-center justify-center rounded-lg flex-shrink-0"
                 style={{
-                  background:
-                    'linear-gradient(135deg,#1e3a8a,#0ea5e9)'
+                  background: 'linear-gradient(135deg,#1e3a8a,#0ea5e9)'
                 }}
               >
                 <FlaskConical size={18} color="#fff" />
               </div>
-
               <span className="font-display text-lg font-bold text-white">
-                SmartLab
-                <span className="text-sky-400">Tech</span>
+                SmartLab<span className="text-sky-400">Tech</span>
               </span>
             </div>
 
+            {/* Company Description */}
             <p className="text-sm text-slate-400 leading-relaxed font-body mb-5">
-              Precision instruments and scientific solutions for research,
-              pharma, and education since 2004.
+              {companyDescription}
             </p>
 
-            {/* Social */}
+            {/* Social Media Links */}
             <div className="flex gap-2.5 mb-6">
-
-              {[
-                {
-                  icon: FaLinkedin,
-                  link: "https://linkedin.com",
-                },
-                {
-                  icon: FaTwitter,
-                  link: "https://twitter.com",
-                },
-                {
-                  icon: FaInstagram,
-                  link: "https://instagram.com",
-                },
-                {
-                  icon: FaYoutube,
-                  link: "https://youtube.com",
-                },
-              ].map((item, i) => {
-
+              {socialLinks.map((item, i) => {
                 const Icon = item.icon;
-
                 return (
                   <a
                     key={i}
-                    href={item.link}
+                    href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-lg border border-white/10 bg-white/7 flex items-center justify-center cursor-pointer transition-all"
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(14,165,233,0.2)';
-                      e.currentTarget.style.borderColor =
-                        '#0ea5e9';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        'rgba(255,255,255,0.07)';
-                      e.currentTarget.style.borderColor =
-                        'rgba(255,255,255,0.1)';
-                    }}
+                    className="w-9 h-9 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center cursor-pointer transition-all hover:bg-white/10 hover:border-sky-500"
                   >
                     <Icon size={16} color="#94a3b8" />
                   </a>
@@ -233,109 +214,119 @@ export default function Footer({ id }) {
               })}
             </div>
 
-            {/* Contact */}
+            {/* Contact Information */}
             <div className="flex flex-col gap-2.5">
-
-              {[
-                [Phone, '+91 40 6789 1234'],
-                [Mail, 'info@smartlabtech.in'],
-                [MapPin, 'Hyderabad, Telangana']
-              ].map(([Icon, text]) => (
-
-                <div
-                  key={text}
-                  className="flex items-center gap-2.5"
-                >
-                  <Icon
-                    size={13}
-                    color="#38bdf8"
-                    className="flex-shrink-0"
-                  />
-
-                  <span className="text-sm text-slate-400 font-body">
-                    {text}
-                  </span>
-                </div>
-
-              ))}
+              <div className="flex items-center gap-2.5">
+                <Phone size={13} color="#38bdf8" className="flex-shrink-0" />
+                <span className="text-sm text-slate-400 font-body">
+                  {companyContact.mobileNumber}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail size={13} color="#38bdf8" className="flex-shrink-0" />
+                <span className="text-sm text-slate-400 font-body">
+                  {companyContact.email}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <MapPin size={13} color="#38bdf8" className="flex-shrink-0" />
+                <span className="text-sm text-slate-400 font-body">
+                  {companyContact.location}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Footer Links */}
-          {Object.entries(FOOTER_LINKS).map(([title, links]) => (
-
+          {/* Footer Links Sections */}
+          {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-
               <p className="text-xs font-bold text-white tracking-widest uppercase mb-4 font-body">
                 {title}
               </p>
-
               <ul className="flex flex-col gap-2.5 list-none">
-
-                {links.map((link) => (
-
-                  <li key={link}>
-
+                {links.map((link, idx) => (
+                  <li key={idx}>
                     <button
-                      onClick={() =>
-                        navigate(
-                          FOOTER_ROUTES[link] || "/"
-                        )
-                      }
-                      className="bg-transparent border-none cursor-pointer p-0 text-sm text-slate-400 font-body text-left transition-colors duration-200"
-                      onMouseEnter={(e) =>
-                        (e.target.style.color = '#38bdf8')
-                      }
-                      onMouseLeave={(e) =>
-                        (e.target.style.color = '#94a3b8')
-                      }
+                      onClick={() => handleNavigate(link.path)}
+                      className="bg-transparent border-none cursor-pointer p-0 text-sm text-slate-400 font-body text-left transition-colors duration-200 hover:text-sky-400"
                     >
-                      {link}
+                      {link.name}
                     </button>
-
                   </li>
-
                 ))}
               </ul>
             </div>
-
           ))}
         </div>
 
-        {/* Bottom */}
+        {/* Bottom Section */}
         <div className="border-t border-white/[0.08] py-6 flex flex-wrap justify-between items-center gap-3">
-
           <span className="text-sm text-slate-500 font-body">
-            © 2026 SmartLabTech Pvt. Ltd. All rights reserved.
+            {copyrightText}
           </span>
 
           <div className="flex gap-5">
-
-            {[
-              'Privacy Policy',
-              'Terms of Service',
-              'Cookie Policy'
-            ].map((link) => (
-
-              <button
-                key={link}
-                onClick={() =>
-                  navigate(
-                    FOOTER_ROUTES[link] || "/"
-                  )
-                }
-                className="bg-transparent border-none cursor-pointer text-xs text-slate-500 font-body transition-colors duration-200"
-                onMouseEnter={(e) =>
-                  (e.target.style.color = '#38bdf8')
-                }
-                onMouseLeave={(e) =>
-                  (e.target.style.color = '#475569')
-                }
+            {/* Privacy Policy Link */}
+            {footerData?.privacyPolicy?.file && (
+              <a
+                href={footerData.privacyPolicy.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer"
               >
-                {link}
-              </button>
+                Privacy Policy
+              </a>
+            )}
+            
+            {/* Terms of Service Link */}
+            {footerData?.termsOfService?.file && (
+              <a
+                href={footerData.termsOfService.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer"
+              >
+                Terms of Service
+              </a>
+            )}
+            
+            {/* Cookie Policy Link */}
+            {footerData?.cookiePolicy?.file && (
+              <a
+                href={footerData.cookiePolicy.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer"
+              >
+                Cookie Policy
+              </a>
+            )}
 
-            ))}
+            {/* Fallback links if no policy files */}
+            {!footerData?.privacyPolicy?.file && (
+              <button
+                onClick={() => handleNavigate('/privacy-policy')}
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer bg-transparent border-none"
+              >
+                Privacy Policy
+              </button>
+            )}
+            {!footerData?.termsOfService?.file && (
+              <button
+                onClick={() => handleNavigate('/terms')}
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer bg-transparent border-none"
+              >
+                Terms of Service
+              </button>
+            )}
+            {!footerData?.cookiePolicy?.file && (
+              <button
+                onClick={() => handleNavigate('/cookies')}
+                className="text-xs text-slate-500 font-body transition-colors duration-200 hover:text-sky-400 cursor-pointer bg-transparent border-none"
+              >
+                Cookie Policy
+              </button>
+            )}
           </div>
         </div>
       </div>
