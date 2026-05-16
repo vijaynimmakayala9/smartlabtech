@@ -32,7 +32,34 @@ function Reveal({ children, delay = 0, className = '' }) {
   );
 }
 
-/* ─── Shared hook: fetch subjects ───────────────────────────────────────── */
+/* ─── Hook: fetch contact hero ──────────────────────────────────────────── */
+function useContactHero() {
+  const [hero, setHero] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHero = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contacts/hero');
+        if (res.status === 404) { setHero(null); return; }
+        const json = await res.json();
+        if (json.success && json.data && json.data.isActive) {
+          setHero(json.data);
+        }
+      } catch {
+        /* silently fail — fallback values used below */
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHero();
+  }, []);
+
+  return { hero, loading };
+}
+
+/* ─── Hook: fetch subjects ───────────────────────────────────────────────── */
 function useSubjects() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,10 +71,7 @@ function useSubjects() {
         const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/contacts/subjects');
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
-          setSubjects(
-            json.data
-              .filter(s => s.isActive)
-          );
+          setSubjects(json.data.filter(s => s.isActive));
         }
       } catch { /* silently fail */ }
       finally { setLoading(false); }
@@ -108,6 +132,14 @@ async function submitContact(payload) {
   return json;
 }
 
+/* ─── Fallback hero content ─────────────────────────────────────────────── */
+const HERO_FALLBACK = {
+  tag: "We're Here to Help",
+  title: "Contact Us",
+  description: "Have questions or need assistance? We're here to help you. Reach out to us anytime.",
+  image: "https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1600",
+};
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', subject: '', message: ''
@@ -117,12 +149,19 @@ const ContactPage = () => {
   const [apiError, setApiError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const { hero: heroData, loading: heroLoading } = useContactHero();
   const { subjects, loading: subjectsLoading } = useSubjects();
   const { contactInfo, loading: contactLoading, error: contactError } = useContactInfo();
 
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+
+  // Resolve hero values: use API data when available, else fallback
+  const heroTag         = heroData?.tag         || HERO_FALLBACK.tag;
+  const heroTitle       = heroData?.title       || HERO_FALLBACK.title;
+  const heroDescription = heroData?.description || HERO_FALLBACK.description;
+  const heroImage       = heroData?.image        || HERO_FALLBACK.image;
 
   const inputClass = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200";
 
@@ -170,7 +209,6 @@ const ContactPage = () => {
     setApiError('');
   };
 
-  // Helper to get display phone numbers
   const getPhoneDisplay = () => {
     if (contactLoading) return [{ number: 'Loading...', isPrimary: false }];
     if (contactError || contactInfo.phones.length === 0) {
@@ -179,7 +217,6 @@ const ContactPage = () => {
     return contactInfo.phones.map((phone, idx) => ({ number: phone, isPrimary: idx === 0 }));
   };
 
-  // Helper to get display emails
   const getEmailDisplay = () => {
     if (contactLoading) return [{ email: 'Loading...', isPrimary: false }];
     if (contactError || contactInfo.emails.length === 0) {
@@ -188,20 +225,12 @@ const ContactPage = () => {
     return contactInfo.emails.map((email, idx) => ({ email, isPrimary: idx === 0 }));
   };
 
-  // Helper to get display address
   const getAddressDisplay = () => {
     if (contactLoading) return 'Loading address...';
     if (contactError || contactInfo.fullAddresses.length === 0) {
       return 'Plot #74 and #75/B, Sy #735, Phase-II, S.V. Co-operative Industrial Estate, Balanagar, Hyderabad, Telangana - 500 037, India.';
     }
     return contactInfo.fullAddresses[0];
-  };
-
-  // Helper to get formatted address for display (with line breaks)
-  const getFormattedAddress = () => {
-    const address = getAddressDisplay();
-    // Split by common delimiters for better display
-    return address;
   };
 
   const phones = getPhoneDisplay();
@@ -215,11 +244,20 @@ const ContactPage = () => {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section ref={heroRef} className="relative overflow-hidden" style={{ minHeight: 'clamp(580px, 85vh, 820px)' }}>
         <motion.div className="absolute inset-0" style={{ y: imgY }}>
-          <img
-            src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1600"
-            alt="Customer Support"
-            className="w-full h-full object-cover object-center scale-110"
-          />
+          {/* Show a subtle skeleton shimmer while hero loads, then fade in the real image */}
+          {heroLoading ? (
+            <div className="w-full h-full bg-gradient-to-br from-blue-900 to-slate-900 animate-pulse" />
+          ) : (
+            <motion.img
+              key={heroImage}
+              src={heroImage}
+              alt={heroTitle}
+              className="w-full h-full object-cover object-center scale-110"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            />
+          )}
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,86,0.88)_0%,rgba(30,58,138,0.72)_50%,rgba(14,165,233,0.82)_100%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_top,#0f2356_0%,transparent_55%)]" />
         </motion.div>
@@ -230,41 +268,87 @@ const ContactPage = () => {
         }} />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none bg-gradient-to-bl from-sky-500/10 to-transparent rounded-full blur-3xl" />
 
-        <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center text-center h-full"
-          style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
-            className="flex items-center justify-center gap-3 mb-6">
+        <div
+          className="relative z-10 max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center text-center h-full"
+          style={{ paddingTop: 'clamp(80px,12vw,140px)', paddingBottom: 'clamp(60px,10vw,120px)' }}
+        >
+          {/* Tag line */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: heroLoading ? 0 : 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="flex items-center justify-center gap-3 mb-6"
+          >
             <div className="w-8 h-px bg-sky-400" />
-            <span className="text-[11px] font-semibold tracking-[0.3em] uppercase text-sky-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              We're Here to Help
+            <span
+              className="text-[11px] font-semibold tracking-[0.3em] uppercase text-sky-300"
+              style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
+              {heroTag}
             </span>
             <div className="w-8 h-px bg-sky-400" />
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85, delay: 0.1 }}
+          {/* Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: heroLoading ? 0 : 1, y: 0 }}
+            transition={{ duration: 0.85, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.1] mb-6 text-center"
-            style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '-0.02em' }}>
-            Contact{' '}
-            <span className="bg-gradient-to-r from-sky-300 to-blue-300 bg-clip-text text-transparent">Us</span>
+            style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '-0.02em' }}
+          >
+            {/* Split last word for the gradient accent, fallback gracefully */}
+            {(() => {
+              const words = heroTitle.trim().split(' ');
+              if (words.length === 1) {
+                return (
+                  <span className="bg-gradient-to-r from-sky-300 to-blue-300 bg-clip-text text-transparent">
+                    {words[0]}
+                  </span>
+                );
+              }
+              const last = words.pop();
+              return (
+                <>
+                  {words.join(' ')}{' '}
+                  <span className="bg-gradient-to-r from-sky-300 to-blue-300 bg-clip-text text-transparent">
+                    {last}
+                  </span>
+                </>
+              );
+            })()}
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.22 }}
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: heroLoading ? 0 : 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.22 }}
             className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-white/80 text-center mx-auto"
-            style={{ fontFamily: "'Outfit', sans-serif" }}>
-            Have questions or need assistance? We're here to help you. Reach out to us anytime.
+            style={{ fontFamily: "'Outfit', sans-serif" }}
+          >
+            {heroDescription}
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.34 }}
-            className="flex flex-wrap gap-3 justify-center">
-            <a href={`tel:${phones[0]?.number.replace(/\s/g, '') || '+914023774310'}`}
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: heroLoading ? 0 : 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.34 }}
+            className="flex flex-wrap gap-3 justify-center"
+          >
+            <a
+              href={`tel:${phones[0]?.number.replace(/\s/g, '') || '+914023774310'}`}
               className="relative overflow-hidden inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
-              style={{ fontFamily: "'Outfit', sans-serif" }}>
+              style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
               <FaPhoneAlt size={14} /> Call Us Now
             </a>
-            <a href={`mailto:${emails[0]?.email || 'info@smartlabtech.net'}`}
+            <a
+              href={`mailto:${emails[0]?.email || 'info@smartlabtech.net'}`}
               className="relative overflow-hidden inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
-              style={{ fontFamily: "'Outfit', sans-serif" }}>
+              style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
               <FaEnvelope size={14} /> Send Email
             </a>
           </motion.div>
@@ -331,7 +415,7 @@ const ContactPage = () => {
                 <div>
                   <h4 className="font-semibold text-sm text-slate-700 mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Address</h4>
                   <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    {getFormattedAddress()}
+                    {getAddressDisplay()}
                   </p>
                 </div>
               </div>
@@ -363,7 +447,6 @@ const ContactPage = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 border border-slate-100 shadow-lg">
 
               {submitted ? (
-                /* Success state */
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
