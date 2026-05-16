@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "../modal/Modal";
+import { QuoteForm } from "../modal/QuoteForm";
 
 const smoothScrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -14,6 +16,8 @@ export default function Hero({ id }) {
   const [direction, setDirection] = useState(1);
   const [displayText, setDisplayText] = useState("");
   const [isPaused, setIsPaused] = useState(false);
+
+  const [openQuote, setOpenQuote] = useState();
 
   const currentRef = useRef(current);
   useEffect(() => { currentRef.current = current; }, [current]);
@@ -139,9 +143,8 @@ export default function Hero({ id }) {
                     key={i}
                     onClick={() => go(i)}
                     aria-label={`Go to slide ${i + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
-                      i === current ? "w-7 bg-sky-400" : "w-2 bg-white/55 hover:bg-white/80"
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${i === current ? "w-7 bg-sky-400" : "w-2 bg-white/55 hover:bg-white/80"
+                      }`}
                   />
                 ))}
               </div>
@@ -219,7 +222,7 @@ export default function Hero({ id }) {
 
             <div className="flex flex-col xs:flex-row flex-wrap gap-3 w-full sm:w-auto">
               <button
-                onClick={() => smoothScrollTo("contact")}
+                onClick={() => setOpenQuote(true)}
                 className={`flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 rounded-xl bg-gradient-to-r ${accent} text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-sky-300/50 hover:scale-105 active:scale-95 transition-all duration-150 w-full xs:w-auto focus:outline-none focus:ring-2 focus:ring-sky-400`}
               >
                 Get a Quote <ArrowRight size={16} />
@@ -239,15 +242,19 @@ export default function Hero({ id }) {
                   key={i}
                   onClick={() => go(i)}
                   aria-label={`Go to slide ${i + 1}`}
-                  className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
-                    i === current ? "w-7 bg-sky-500" : "w-2 bg-slate-300 hover:bg-slate-400"
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${i === current ? "w-7 bg-sky-500" : "w-2 bg-slate-300 hover:bg-slate-400"
+                    }`}
                 />
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      <Modal open={openQuote} onClose={() => setOpenQuote(false)}>
+        <QuoteForm onClose={() => setOpenQuote(false)} />
+      </Modal>
+
     </section>
   );
 }

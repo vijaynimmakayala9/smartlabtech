@@ -346,12 +346,12 @@ const ContactPage = () => {
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Monday – Saturday</span>
+                    <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Monday – Sunday</span>
                     <span className="text-blue-600 font-semibold bg-blue-50 px-2.5 py-0.5 rounded-full text-xs border border-blue-200" style={{ fontFamily: "'Outfit', sans-serif" }}>9:00 AM – 6:00 PM</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Sunday</span>
-                    <span className="text-slate-400 text-xs" style={{ fontFamily: "'Outfit', sans-serif" }}>Closed</span>
+                    <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Availability</span>
+                    <span className="text-slate-400 text-xs" style={{ fontFamily: "'Outfit', sans-serif" }}>24/7</span>
                   </div>
                 </div>
               </div>

@@ -4,8 +4,8 @@ import { FaLinkedin, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 const FOOTER_LINKS = {
   Products: ['Microscopes', 'Spectrometers', 'Centrifuges', 'Balances', 'Incubators', 'Smart Lab Systems'],
   Services: ['Equipment Supply', 'Installation & Calibration', 'Maintenance (AMC)', 'Scientific Consulting', 'Quality Validation', 'Training Programs'],
-  Company: ['About Us', 'Our Journey', 'Careers', 'News & Events', 'Partners', 'CSR Initiatives'],
-  Support: ['Technical Support', 'Documentation', 'FAQs', 'Request a Demo', 'Get a Quote', 'Contact Us'],
+  Company: ['About Us', 'Services', 'Blogs', 'Resourses', 'Products'],
+  Support: ['Get a Quote', 'Contact Us', 'Support', 'Careers'],
 };
 
 export default function Footer({ id }) {

@@ -230,21 +230,7 @@ const BlogsPage = () => {
 
                         {/* Sidebar - Premium */}
                         <div className="space-y-8">
-                            {/* Newsletter Card */}
-                            <div className="bg-gradient-to-br from-[#0f2356] to-[#1e3a8a] rounded-2xl p-6 text-white shadow-xl">
-                                <h3 className="text-xl font-bold mb-2">Newsletter</h3>
-                                <p className="text-blue-100 text-sm mb-4">Get the latest insights delivered to your inbox.</p>
-                                <div className="space-y-3">
-                                    <input
-                                        type="email"
-                                        placeholder="Your email address"
-                                        className="w-full px-4 py-2 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-                                    />
-                                    <button className="w-full bg-white text-[#0f2356] font-semibold py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                                        Subscribe
-                                    </button>
-                                </div>
-                            </div>
+                            
 
                             {/* Categories Card */}
                             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -315,30 +301,7 @@ const BlogsPage = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* CTA Section - Premium */}
-                <div className="relative overflow-hidden bg-gradient-to-r from-[#0f2356] to-[#2563eb]">
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070')] bg-cover bg-center opacity-10"></div>
-                    <div className="relative max-w-4xl mx-auto text-center py-20 px-6">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                            Never Miss an Update
-                        </h2>
-                        <p className="text-blue-100 text-lg mb-8">
-                            Join 10,000+ lab professionals who receive our weekly newsletter.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="flex-1 px-5 py-3 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-                            />
-                            <button className="bg-white text-[#0f2356] font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
-                                Subscribe Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                </div>                
             </main>
             <Footer />
         </>

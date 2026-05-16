@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Reveal({ children, delay = 0 }) {
   const ref = useRef(null);
@@ -20,6 +21,8 @@ function Reveal({ children, delay = 0 }) {
 export default function About({ id }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://smartlabtechbackend-p5h6.onrender.com/api/homepage/about")
@@ -116,7 +119,7 @@ export default function About({ id }) {
               )}
 
               {/* CTA button */}
-              <button className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-900 to-sky-500 shadow-[0_6px_20px_rgba(30,58,138,0.25)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(30,58,138,0.35)] active:translate-y-0 transition-all duration-200 w-full sm:w-auto justify-center">
+              <button onClick={()=>navigate('/about')} className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-900 to-sky-500 shadow-[0_6px_20px_rgba(30,58,138,0.25)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(30,58,138,0.35)] active:translate-y-0 transition-all duration-200 w-full sm:w-auto justify-center">
                 {data.buttonText || "More Info"} <ArrowRight size={15} />
               </button>
             </div>

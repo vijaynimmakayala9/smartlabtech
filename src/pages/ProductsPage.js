@@ -617,69 +617,7 @@ const ProductsPage = () => {
           </div>
         </section>
 
-        {/* Features Banner */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-8xl mx-auto">
-            <div className="relative rounded-3xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-sky-700" />
-              <div className="relative z-10 p-8 sm:p-12">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {features.map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      className="text-center"
-                    >
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <item.icon size={22} className="text-white" />
-                      </div>
-                      <p className="text-white font-semibold text-sm mb-1">{item.title}</p>
-                      <p className="text-white/70 text-xs">{item.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-3xl p-8 sm:p-12 border border-slate-200"
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 rounded-full mb-6">
-                <FlaskConical size={14} className="text-blue-600" />
-                <span className="text-xs font-semibold text-blue-700">EXPERT CONSULTATION</span>
-              </div>
-
-              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                Need Help Selecting Equipment?
-              </h2>
-              <p className="text-slate-600 text-sm sm:text-base mb-8 max-w-2xl mx-auto">
-                Our technical specialists will help you find the perfect instrument for your specific requirements.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2">
-                  <Phone size={18} />
-                  Schedule a Call
-                </button>
-                <button className="px-8 py-3.5 bg-white text-slate-700 font-semibold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm">
-                  <BookOpen size={18} />
-                  Download Catalog
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+       
 
         {/* Back to Top */}
         <AnimatePresence>

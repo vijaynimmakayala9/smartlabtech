@@ -162,7 +162,7 @@ export default function Contact({ id }) {
     { icon: MapPin, label: 'Address',        value: getAddressDisplay(), color: 'text-blue-900',  bg: 'bg-blue-900/[0.07]',  border: 'hover:border-blue-900' },
     { icon: Phone,  label: 'Phone',          value: getPhoneDisplay(),   color: 'text-sky-600',   bg: 'bg-sky-600/[0.07]',   border: 'hover:border-sky-600'  },
     { icon: Mail,   label: 'Email',          value: getEmailDisplay(),   color: 'text-sky-500',   bg: 'bg-sky-500/[0.07]',   border: 'hover:border-sky-500'  },
-    { icon: Clock,  label: 'Business Hours', value: 'Mon – Sat: 9:00 AM – 6:00 PM\nSunday: Closed',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' },
+    { icon: Clock,  label: 'Business Hours', value: 'Monday – Sunday\n Availability: 24/7',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' },
   ];
 
   return (
@@ -316,7 +316,7 @@ export default function Contact({ id }) {
                           >
                             <option value="">Select Subject</option>
                             {subjects.map((s) => (
-                              <option key={s._id} value={s.name}>{s.name}</option>
+                              <option key={s._id} value={s._id}>{s.name}</option>
                             ))}
                           </select>
                           <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />

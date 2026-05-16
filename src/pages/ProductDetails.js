@@ -14,6 +14,9 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FALLBACK_IMAGE from '../assets/fallbackimage.png';
+import { QuoteForm } from "../modal/QuoteForm";
+import { Modal } from "../modal/Modal";
+import { QueryForm } from "../modal/QueryForm";
 
 const API_BASE = "https://smartlabtechbackend-p5h6.onrender.com";
 
@@ -270,6 +273,15 @@ const ProductDetails = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('overview');
 
+
+  const [openContact, setOpenContact] = useState(false);
+  const [openQuote, setOpenQuote] = useState(false);
+
+  const [open, setOpen] = useState(null);
+
+
+  const closeModal = () => setOpen(null);
+
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
   const opacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -302,7 +314,7 @@ const ProductDetails = () => {
       const json = await res.json();
       const list = json.data || json.products || (Array.isArray(json) ? json : []);
       setRelatedProducts(list);
-    } catch (_) {}
+    } catch (_) { }
   };
 
   useEffect(() => {
@@ -317,9 +329,9 @@ const ProductDetails = () => {
   /* ─── Derived data from live product ─── */
   const galleryImages = product
     ? [
-        // ...(product.mainImage ? [getImageUrl(product.mainImage)] : []),
-        ...(product.gallery || []).map(getImageUrl)
-      ].filter(Boolean)
+      // ...(product.mainImage ? [getImageUrl(product.mainImage)] : []),
+      ...(product.gallery || []).map(getImageUrl)
+    ].filter(Boolean)
     : [];
 
   const brandName = product?.brandName || product?.brand?.name || "—";
@@ -463,7 +475,7 @@ const ProductDetails = () => {
                   </div>
                 )}
 
-                
+
 
                 {/* SKU & Stock */}
                 <div className="flex flex-wrap gap-4 sm:gap-6 mb-4 sm:mb-6">
@@ -880,15 +892,15 @@ const ProductDetails = () => {
                     Get personalised consultation and exclusive pricing for your requirements. Our experts are ready to help.
                   </p>
                   <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
-                    <button className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-blue-700 font-semibold rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm sm:text-base">
+                    <button onClick={() => setOpenContact(true)} className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-blue-700 font-semibold rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-sm sm:text-base">
                       <Mail size={16} />Contact Us
                     </button>
-                    <button className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
+                    <button onClick={() => setOpenQuote(true)} className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
                       <Phone size={16} />Request Callback
                     </button>
-                    <button className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
+                    {/* <button className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white/80 text-white font-semibold rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-sm sm:text-base">
                       <FileText size={16} />Download Datasheet
-                    </button>
+                    </button> */}
                   </div>
                 </motion.div>
               </div>
@@ -908,6 +920,15 @@ const ProductDetails = () => {
         </AnimatePresence>
       </div>
       <Footer />
+
+      <Modal open={openContact} onClose={() => setOpenContact(false)}>
+        <QueryForm onClose={() => setOpenContact(false)} />
+      </Modal>
+
+      <Modal open={openQuote} onClose={() => setOpenQuote(false)}>
+        <QuoteForm onClose={() => setOpenQuote(false)} />
+      </Modal>
+
     </>
   );
 };

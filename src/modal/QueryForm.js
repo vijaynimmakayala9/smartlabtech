@@ -168,7 +168,7 @@ export function QueryForm({ onClose }) {
       // Close form after 5 seconds
       setTimeout(() => {
         onClose();
-      }, 5000);
+      }, 3000);
 
     } catch (err) {
       setApiError(
