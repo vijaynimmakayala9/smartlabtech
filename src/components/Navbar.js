@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, Menu, X, ChevronRight, ArrowRight,
@@ -52,6 +52,14 @@ export default function Navbar() {
   const searchBarRef = useRef(null);
   const searchInputRef = useRef(null);
 
+  // ── Search Suggestions/Results State ──
+  const [searchItems, setSearchItems] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [isSearching, setIsSearching] = useState(false); // true when user has typed (showing results, not suggestions)
+  const debounceTimerRef = useRef(null);
+  const suggestionsFetchedRef = useRef(false);
+
   const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
@@ -86,6 +94,113 @@ export default function Navbar() {
     }
   };
 
+  // ── Fetch Search Suggestions (initial load - shown when input is empty) ──
+  const fetchSearchSuggestions = async () => {
+    try {
+      setSearchLoading(true);
+      setSearchError(null);
+      const res = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/products/search/suggestions');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (json.success && json.data?.products) {
+        setSearchItems(json.data.products);
+        setIsSearching(false); // Show suggestions mode
+      } else {
+        setSearchItems([]);
+        setIsSearching(false);
+      }
+    } catch (err) {
+      setSearchError(err.message || 'Failed to load suggestions');
+      setSearchItems([]);
+      setIsSearching(false);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // ── Fetch Search Results with query (replaces suggestions when typing) ──
+  const fetchSearchResults = useCallback(async (query) => {
+    if (!query || query.trim() === '') {
+      fetchSearchSuggestions();
+      return;
+    }
+    
+    setIsSearching(true); // Switch to results mode (replaces suggestions)
+    
+    try {
+      setSearchLoading(true);
+      setSearchError(null);
+      const res = await fetch(`https://smartlabtechbackend-p5h6.onrender.com/api/products/search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        // Transform search results to match suggestion format
+        const transformed = json.data.map(product => ({
+          type: 'product',
+          id: product._id,
+          name: product.name,
+          brandName: product.brandName || product.brand?.name,
+          categoryName: product.categoryName || product.category?.name,
+          image: product.mainImage,
+          brand: product.brand,
+          category: product.category,
+          slug: product.slug,
+        }));
+        setSearchItems(transformed); // Replace suggestions with search results
+      } else {
+        setSearchItems([]);
+      }
+    } catch (err) {
+      setSearchError(err.message || 'Failed to load search results');
+      setSearchItems([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, []);
+
+  // ── Debounced search handler ──
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // If empty input, show suggestions (replace any previous results)
+    if (searchTerm.trim() === '') {
+      setIsSearching(false);
+      fetchSearchSuggestions();
+      return;
+    }
+    
+    // User is typing - debounce and fetch results (replaces suggestions)
+    debounceTimerRef.current = setTimeout(() => {
+      fetchSearchResults(searchTerm);
+    }, 300);
+    
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchTerm, isSearchOpen, fetchSearchResults]);
+
+  // ── Fetch initial suggestions when search opens ──
+  useEffect(() => {
+    if (isSearchOpen && !suggestionsFetchedRef.current) {
+      suggestionsFetchedRef.current = true;
+      fetchSearchSuggestions();
+    }
+    if (!isSearchOpen) {
+      suggestionsFetchedRef.current = false;
+      setSearchItems([]);
+      setSearchTerm('');
+      setIsSearching(false);
+      setSearchLoading(false);
+      setSearchError(null);
+    }
+  }, [isSearchOpen]);
+
   // ── Scroll ──
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -98,7 +213,8 @@ export default function Navbar() {
     const fn = (e) => {
       const inNavbar = e.target.closest('[data-navbar]');
       const inDropdown = dropZoneRef.current?.contains(e.target);
-      if (!inNavbar && !inDropdown) {
+      const inSearchDropdown = e.target.closest('[data-search-dropdown]');
+      if (!inNavbar && !inDropdown && !inSearchDropdown) {
         setDropOpen(false);
         setMoreDropOpen(false);
         setIsSearchOpen(false);
@@ -157,13 +273,41 @@ export default function Navbar() {
   const closeMoreDrop = () => { moreTimerRef.current = setTimeout(() => setMoreDropOpen(false), 150); };
 
   // ── Search ──
-  const handleSearchOpen = () => { setIsSearchOpen(true); setDropOpen(false); setMoreDropOpen(false); setSearchTerm(''); };
-  const handleSearchClose = () => { setIsSearchOpen(false); setSearchTerm(''); };
+  const handleSearchOpen = () => { 
+    setIsSearchOpen(true); 
+    setDropOpen(false); 
+    setMoreDropOpen(false); 
+    setSearchTerm('');
+    setSearchItems([]);
+    setIsSearching(false);
+    fetchSearchSuggestions();
+  };
+  const handleSearchClose = () => { 
+    setIsSearchOpen(false); 
+    setSearchTerm('');
+    setSearchItems([]);
+    setIsSearching(false);
+    setSearchLoading(false);
+    setSearchError(null);
+  };
   const handleSearchSubmit = () => {
     if (searchTerm.trim()) {
       setIsSearchOpen(false);
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setSearchTerm('');
+      setSearchItems([]);
+      setIsSearching(false);
+    }
+  };
+
+  // ── Handle suggestion/result click ──
+  const handleItemClick = (item) => {
+    setIsSearchOpen(false);
+    setSearchTerm('');
+    setSearchItems([]);
+    setIsSearching(false);
+    if (item.type === 'product' && item.id) {
+      navigate(`/product/${item.id}`);
     }
   };
 
@@ -205,34 +349,84 @@ export default function Navbar() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className={`fixed top-0 left-0 right-0 z-[1000]
-            px-4 sm:px-10 lg:px-20
-            h-[64px] sm:h-[72px] lg:h-[80px]
-            transition-all duration-300
-            ${scrolled
-              ? 'bg-white/98 border-b border-slate-200 shadow-[0_4px_24px_rgba(15,35,86,0.10)]'
-              : 'bg-white/95 border-b border-slate-200/50'
+          px-4 sm:px-10 lg:px-20
+          h-[64px] sm:h-[72px] lg:h-[80px]
+          transition-all duration-300
+          ${scrolled
+              ? 'bg-gradient-to-r from-blue-900 to-sky-500 border-b border-slate-200 shadow-[0_4px_24px_rgba(15,35,86,0.10)]'
+              : 'bg-gradient-to-r from-blue-900 to-sky-500 border-b border-slate-200/50'
             } backdrop-blur-xl`}
         >
           <div className="h-full flex items-center justify-between">
 
             {/* ── Logo ── */}
             <button
-              onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className={`flex items-center gap-2.5 sm:gap-3.5 flex-shrink-0 bg-transparent border-none cursor-pointer p-0 transition-all duration-300 ${isSearchOpen ? 'lg:flex hidden' : 'flex'}`}
+              onClick={() => {
+                navigate('/');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`
+                flex items-center gap-2 sm:gap-3
+                flex-shrink-0
+                rounded-2xl
+                bg-white
+                shadow-[0_4px_20px_rgba(15,35,86,0.08)]
+                hover:shadow-[0_8px_30px_rgba(15,35,86,0.14)]
+                transition-all duration-300
+                border border-white/60
+                px-2.5 sm:px-3.5
+                py-1.5 sm:py-2
+                min-h-[52px] sm:min-h-[58px]
+                max-w-full
+                overflow-hidden
+                ${isSearchOpen ? 'lg:flex hidden' : 'flex'}
+              `}
             >
-              <img
-                src="/logo.png"
-                alt="SmartLabTech"
-                className="h-9 sm:h-11 lg:h-[48px] w-auto object-contain"
-                onError={e => { e.target.style.display = 'none'; }}
-              />
-              <div className="flex flex-col leading-tight">
-                <span className="text-base sm:text-lg lg:text-xl font-bold text-blue-900 tracking-tight">
-                  SmartLab<span className="text-sky-500">Tech</span>
+
+              {/* Logo */}
+              <div
+                className="
+      flex items-center justify-center
+      rounded-xl
+      bg-gradient-to-br from-slate-50 to-blue-50
+      p-1 sm:p-1.5
+      flex-shrink-0
+    "
+              >
+                <img
+                  src="/logo.png"
+                  alt="SmartLabTech"
+                  className="
+        h-8 sm:h-10 lg:h-11
+        w-auto
+        object-contain
+        block
+      "
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+
+              {/* Text */}
+              <div className="flex flex-col justify-center min-w-0 text-left">
+
+                <span
+                  className="
+                  text-sm sm:text-lg lg:text-[20px]
+                  font-bold
+                  leading-none
+                  tracking-tight
+                  text-blue-950
+                  whitespace-nowrap
+                "
+                >
+                  SmartLab
+                  <span className="text-sky-500">
+                    Tech
+                  </span>
                 </span>
-                <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 tracking-widest uppercase mt-0.5 hidden xs:block">
-                  Scientifically Yours
-                </span>
+
               </div>
             </button>
 
@@ -249,7 +443,7 @@ export default function Navbar() {
                         transition-all duration-150 cursor-pointer border-none
                         ${dropOpen
                           ? 'text-blue-900 bg-indigo-50'
-                          : 'text-black bg-transparent hover:text-blue-900 hover:bg-indigo-50'
+                          : 'text-white bg-transparent hover:text-blue-900 hover:bg-indigo-50'
                         }`}
                     >
                       Products
@@ -266,7 +460,7 @@ export default function Navbar() {
                           transition-all duration-150 cursor-pointer border-none
                           ${moreDropOpen
                             ? 'text-blue-900 bg-indigo-50'
-                            : 'text-black bg-transparent hover:text-blue-900 hover:bg-indigo-50'
+                            : 'text-white bg-transparent hover:text-blue-900 hover:bg-indigo-50'
                           }`}
                       >
                         More
@@ -308,7 +502,7 @@ export default function Navbar() {
                     <button
                       key={link}
                       onClick={() => handleNavClick(link)}
-                      className="px-3 xl:px-4 py-2 rounded-lg text-sm font-semibold text-black bg-transparent
+                      className="px-3 xl:px-4 py-2 rounded-lg text-sm font-semibold text-white bg-transparent
                         cursor-pointer border-none transition-all duration-150 whitespace-nowrap
                         hover:text-blue-900 hover:bg-indigo-50"
                     >
@@ -323,27 +517,167 @@ export default function Navbar() {
             <div
               ref={searchBarRef}
               className={`${isSearchOpen ? 'flex-1 flex items-center gap-2 ml-4' : ''}`}
+              style={{ position: 'relative' }}
             >
               {isSearchOpen ? (
                 <>
                   <div className="relative flex-1 max-w-2xl">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-800" />
                     <input
                       ref={searchInputRef}
                       type="text"
-                      placeholder="Search products, brands, or categories..."
+                      placeholder={isSearching ? "Search products..." : "Browse suggestions..."}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleSearchSubmit();
                         else if (e.key === 'Escape') handleSearchClose();
                       }}
-                      className="w-full pl-12 pr-4 py-2.5 lg:py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm lg:text-base"
+                      className="w-full placeholder:text-blue-800 pl-12 pr-4 py-2.5 lg:py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm lg:text-base"
                     />
+                    
+                    {/* ── Search Suggestions/Results Dropdown ── */}
+                    <AnimatePresence>
+                      {(searchItems.length > 0 || searchLoading || searchError) && isSearchOpen && (
+                        <motion.div
+                          data-search-dropdown
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute left-0 right-0 top-full mt-2 z-[1001] bg-white rounded-xl border border-slate-200 shadow-[0_12px_40px_rgba(15,35,86,0.15)] overflow-hidden max-h-[60vh] overflow-y-auto"
+                        >
+                          {/* Header - Shows mode indicator */}
+                          <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                            <span className="text-xs font-semibold text-slate-600">
+                              {isSearching ? `🔍 Search results for "${searchTerm}"` : '💡 Popular suggestions'}
+                            </span>
+                            {isSearching && searchTerm.trim() !== '' && (
+                              <button
+                                onClick={() => { setSearchTerm(''); fetchSearchSuggestions(); }}
+                                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Loading State */}
+                          {searchLoading && (
+                            <div className="flex items-center justify-center py-6">
+                              <Loader2 size={20} className="animate-spin text-blue-600 mr-2" />
+                              <span className="text-sm text-slate-500">{isSearching ? 'Searching...' : 'Loading suggestions...'}</span>
+                            </div>
+                          )}
+                          
+                          {/* Error State */}
+                          {searchError && !searchLoading && (
+                            <div className="px-4 py-4 text-sm text-red-500 text-center">
+                              {searchError}
+                              <button
+                                onClick={() => isSearching ? fetchSearchResults(searchTerm) : fetchSearchSuggestions()}
+                                className="block mt-2 text-xs font-semibold text-blue-600 hover:text-blue-800"
+                              >
+                                Try again
+                              </button>
+                            </div>
+                          )}
+                          
+                          {/* Items List - Shows suggestions OR results (never both) */}
+                          {!searchLoading && !searchError && searchItems.length > 0 && (
+                            <div className="py-2">
+                              {searchItems.map((item, index) => (
+                                <button
+                                  key={`${item.type}-${item.id}-${index}`}
+                                  onClick={() => handleItemClick(item)}
+                                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-indigo-50 transition-colors text-left group"
+                                >
+                                  {/* Product Image/Icon */}
+                                  <div className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                                    {item.image ? (
+                                      <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          e.target.style.display = 'none';
+                                          e.target.parentNode.innerHTML = `<span class="text-lg">${FALLBACK_PRODUCT_ICON}</span>`;
+                                        }}
+                                      />
+                                    ) : (
+                                      <span className="text-lg">{FALLBACK_PRODUCT_ICON}</span>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Product Info */}
+                                  <div className="flex flex-col flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-blue-900 truncate group-hover:text-blue-700">
+                                      {item.name}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      {item.brandName && (
+                                        <span className="text-xs text-slate-500 truncate">
+                                          {item.brandName}
+                                        </span>
+                                      )}
+                                      {item.brandName && item.categoryName && (
+                                        <span className="text-xs text-slate-300">•</span>
+                                      )}
+                                      {item.categoryName && (
+                                        <span className="text-xs text-slate-400 truncate">
+                                          {item.categoryName}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Arrow */}
+                                  <ChevronRight size={14} className="text-slate-300 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0" />
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          
+                          {/* Empty State */}
+                          {!searchLoading && !searchError && searchItems.length === 0 && (
+                            <div className="px-4 py-8 text-center">
+                              {isSearching && searchTerm.trim() !== '' ? (
+                                <>
+                                  <p className="text-sm text-slate-500">No results found for "{searchTerm}"</p>
+                                  <button
+                                    onClick={handleSearchSubmit}
+                                    className="mt-3 text-xs font-semibold text-blue-600 hover:text-blue-800"
+                                  >
+                                    View all search results →
+                                  </button>
+                                </>
+                              ) : (
+                                <p className="text-sm text-slate-400">No suggestions available</p>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Footer */}
+                          <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-xs text-slate-500">
+                              {searchItems.length} {isSearching ? 'result' : 'suggestion'}{searchItems.length !== 1 ? 's' : ''}
+                            </span>
+                            {isSearching && searchTerm.trim() !== '' && (
+                              <button
+                                onClick={handleSearchSubmit}
+                                className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                              >
+                                View all <ArrowRight size={10} />
+                              </button>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <button
                     onClick={handleSearchClose}
-                    className="p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                    className="p-2.5 text-white hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
                   >
                     <X size={20} />
                   </button>
@@ -354,14 +688,14 @@ export default function Navbar() {
                     onClick={handleSearchOpen}
                     className="hidden lg:flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm text-slate-600 transition-all"
                   >
-                    <Search size={16} />
-                    <span className="hidden xl:inline">Search products...</span>
+                    <Search className='text-blue-800' size={16} />
+                    <span className="hidden xl:inline text-blue-800">Search products...</span>
                     <span className="xl:hidden">Search...</span>
                   </button>
 
                   <button
                     onClick={handleSearchOpen}
-                    className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                    className="lg:hidden p-2 text-white hover:bg-slate-100 rounded-lg transition"
                   >
                     <Search size={20} />
                   </button>
@@ -369,8 +703,8 @@ export default function Navbar() {
                   <button
                     onClick={() => setOpen('quote')}
                     className="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                      text-white flex-shrink-0 whitespace-nowrap border-none cursor-pointer transition-all duration-200
-                      bg-gradient-to-r from-blue-900 to-sky-500 shadow-md hover:-translate-y-0.5 hover:shadow-lg"
+                      text-blue-800 flex-shrink-0 whitespace-nowrap border-none cursor-pointer transition-all duration-200
+                      bg-white shadow-md hover:-translate-y-0.5 hover:shadow-lg"
                   >
                     Get a Quote <ArrowRight size={15} />
                   </button>
@@ -386,8 +720,8 @@ export default function Navbar() {
 
                   <button
                     onClick={() => setMobileOpen(o => !o)}
-                    className={`lg:hidden p-2 rounded-xl border-none cursor-pointer transition-all text-blue-900 ml-1
-                      ${mobileOpen ? 'bg-indigo-50' : 'bg-transparent hover:bg-slate-100'}`}
+                    className={`lg:hidden p-2 rounded-xl border-none cursor-pointer transition-all text-white ml-1
+                      ${mobileOpen ? 'bg-indigo-50 text-blue-800' : 'bg-transparent hover:bg-slate-100'}`}
                     aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                   >
                     {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -476,7 +810,7 @@ export default function Navbar() {
                     {!catLoading && !catError && categories.length > 0 && (
                       <>
                         {/* Category sidebar */}
-                        <div className="w-64 bg-slate-50 border-r border-slate-100 overflow-y-auto p-3">
+                        <div className="w-64 bg-blue-50 border-r border-slate-100 overflow-y-auto p-3">
                           {categories.map((cat) => {
                             const isActive = activeCat === cat._id;
                             return (
@@ -564,18 +898,18 @@ export default function Navbar() {
                                             <p className="text-xs font-semibold text-blue-900 truncate">{product.name}</p>
                                             {product.brand?.name && (
                                               <div className="flex items-center gap-1 mt-0.5">
-                                                
+
                                                 <p className="text-[10px] text-gray-500 leading-tight truncate">{product.brand.name}</p>
                                               </div>
                                             )}
-                                            
+
                                           </div>
 
                                           <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition flex-shrink-0" />
                                         </button>
                                       ))}
 
-                                      
+
                                     </div>
                                   )}
                                 </motion.div>
@@ -836,8 +1170,8 @@ export default function Navbar() {
               <div className="p-4">
                 <button
                   onClick={() => setOpen('quote')}
-                  className="w-full py-3.5 rounded-xl text-sm font-semibold text-white border-none cursor-pointer
-                    bg-gradient-to-r from-blue-900 to-sky-500 shadow-md"
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold text-blue-800 border-none cursor-pointer
+                    bg-white shadow-md"
                 >
                   Get a Quote
                 </button>

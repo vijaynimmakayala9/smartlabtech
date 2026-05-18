@@ -354,7 +354,7 @@ export default function Support() {
 
       {/* Features Section - Premium gradient backgrounds */}
       {features.length > 0 && (
-        <section className="bg-white py-16">
+        <section className="bg-blue-50 py-16">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {features.map((feature, i) => (
@@ -369,7 +369,7 @@ export default function Support() {
 
       {/* Services Section */}
       {services.length > 0 && (
-        <section className="bg-slate-50 py-16">
+        <section className="bg-blue-50 py-16">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <Reveal className="text-center mb-12">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -397,7 +397,7 @@ export default function Support() {
 
       {/* Service Life Cycle Section */}
       {supportLifeCycle && (
-        <section className="bg-white py-16">
+        <section className="bg-blue-50 py-16">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="flex flex-col lg:flex-row gap-12 items-center">
               <Reveal className="flex-1">
@@ -444,7 +444,7 @@ export default function Support() {
 
       {/* FAQ Section */}
       {faqs.length > 0 && (
-        <section className="bg-slate-50 py-16">
+        <section className="bg-blue-50 py-16">
           <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-20">
             <Reveal className="text-center mb-10">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -473,7 +473,7 @@ export default function Support() {
       {/* Contact CTA Section - Premium gradient */}
       {supportCta && supportCta.isActive && (
         <Reveal>
-          <div className="py-16 px-4 bg-slate-50">
+          <div className="py-16 px-4 bg-blue-50">
             <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
               <div className="rounded-2xl p-8 sm:p-12 flex flex-wrap items-center justify-between gap-6 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
                 <div>

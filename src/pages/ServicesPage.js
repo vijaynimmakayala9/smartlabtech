@@ -278,7 +278,7 @@ const ServicesPage = () => {
       </section>
 
       {/* About Services Section */}
-      <section className="bg-white py-20">
+      <section className="bg-blue-50 py-20">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal>
@@ -326,7 +326,7 @@ const ServicesPage = () => {
       </section>
 
       {/* Services Grid Section */}
-      <section className="bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)] py-20">
+      <section className="bg-blue-50 py-20">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-14">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -361,7 +361,7 @@ const ServicesPage = () => {
       </section>
 
       {/* Support Section */}
-      <section className="bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)] py-20">
+      <section className="bg-blue-50 py-20">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 relative overflow-hidden border border-white/80 shadow-lg">
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
@@ -399,7 +399,7 @@ const ServicesPage = () => {
       </section>
 
       {/* Service Request Form Section */}
-      <section className="bg-white py-20">
+      <section className="bg-blue-50 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">

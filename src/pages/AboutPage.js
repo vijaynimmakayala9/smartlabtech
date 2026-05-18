@@ -251,7 +251,7 @@ const AboutPage = () => {
       </section>
 
       {/* Who We Are Section */}
-      <section className="bg-white py-20">
+      <section className="bg-blue-50 py-20">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <Reveal>
@@ -290,7 +290,7 @@ const AboutPage = () => {
 
       {/* Mission & Vision Section */}
       {(missionCard || visionCard) && (
-        <section className="bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)] py-16 border-y border-sky-100/60">
+        <section className="bg-blue-50 py-16 border-y border-sky-100/60">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Mission Card */}
@@ -329,7 +329,7 @@ const AboutPage = () => {
 
       {/* Core Values Section */}
       {coreValuesList.length > 0 && (
-        <section className="bg-white py-20">
+        <section className="bg-blue-50 py-20">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <Reveal className="text-center mb-14">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -367,7 +367,7 @@ const AboutPage = () => {
 
       {/* Why Choose Us Section */}
       {whyUsPoints.length > 0 && (
-        <section className="bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)] py-20 border-y border-sky-100/60">
+        <section className="bg-blue-50 py-20 border-y border-sky-100/60">
           <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <Reveal>
@@ -406,7 +406,7 @@ const AboutPage = () => {
       {/* CTA Section */}
       {cta && cta.isActive && (
         <Reveal>
-          <div className="py-20 px-4 bg-white">
+          <div className="py-20 px-4 bg-blue-50">
             <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
               <div className="rounded-3xl p-12 md:p-16 text-center bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-5" style={{ fontFamily: "'Outfit', sans-serif" }}>

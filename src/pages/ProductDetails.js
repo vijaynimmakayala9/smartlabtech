@@ -376,7 +376,7 @@ const ProductDetails = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
               <AlertCircle size={28} className="text-red-400" />
@@ -404,13 +404,11 @@ const ProductDetails = () => {
     <>
       <FontLink />
       <Navbar />
-      <div ref={containerRef} className="bg-white font-sans">
+      <div ref={containerRef} className="bg-blue-50 font-sans">
 
         {/* ── Hero Section ── */}
-        <section className="relative min-h-[90vh] flex items-center py-16 sm:py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30" />
-          <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-blue-100/30 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-sky-100/20 rounded-full blur-3xl" />
+        <section className="relative min-h-[90vh] bg-blue-50 flex items-center py-16 sm:py-20">
+          
 
           <div className="relative z-10 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
@@ -519,14 +517,6 @@ const ProductDetails = () => {
                     <FileText size={16} />Request a Quote
                   </button>
                 </div>
-
-                {/* Quick Actions */}
-                <div className="flex flex-wrap gap-4 sm:gap-6 pt-4 sm:pt-6 border-t border-slate-200">
-                  <button className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition text-xs sm:text-sm"><Phone size={14} /><span>Call Expert</span></button>
-                  <button className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition text-xs sm:text-sm"><MessageCircle size={14} /><span>Live Chat</span></button>
-                  <button className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition text-xs sm:text-sm"><Share2 size={14} /><span>Share</span></button>
-                  <button className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition text-xs sm:text-sm"><Download size={14} /><span>Datasheet</span></button>
-                </div>
               </motion.div>
             </div>
           </div>
@@ -543,7 +533,7 @@ const ProductDetails = () => {
         </section>
 
         {/* ── Tabbed Detail Section ── */}
-        <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+        <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-blue-50">
           <div className="max-w-8xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8 sm:mb-10">
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2">
@@ -688,7 +678,7 @@ const ProductDetails = () => {
 
         {/* ── Brand Section ── */}
         {(product.brand || product.brandName) && (
-          <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+          <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-blue-50">
             <div className="max-w-8xl mx-auto">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-4">
@@ -797,7 +787,7 @@ const ProductDetails = () => {
 
         {/* ── Recommended Products ── */}
         {recommended.length > 0 && (
-          <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+          <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-blue-50">
             <div className="max-w-8xl mx-auto">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full mb-4">

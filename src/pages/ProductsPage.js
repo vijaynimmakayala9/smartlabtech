@@ -135,15 +135,7 @@ const ProductCard = ({ product, viewMode, index }) => {
             <p className="text-slate-500 text-sm mb-3 line-clamp-2">{product.shortDesc}</p>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-wrap">
-                {product.discountedPrice ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl font-serif font-bold text-slate-900">₹ {product.discountedPrice.toLocaleString('en-IN')}</span>
-                    <span className="text-sm text-slate-400 line-through">₹ {product.price?.toLocaleString('en-IN')}</span>
-                  </div>
-                ) : product.price ? (
-                  <span className="text-xl font-serif font-bold text-slate-900">₹ {product.price.toLocaleString('en-IN')}</span>
-                ) : null}
+              <div className="flex items-center gap-4 flex-wrap">                
                 <div className="flex items-center gap-1.5">
                   <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
                   <span className="text-xs text-slate-500">{product.inStock ? 'Ready to Ship' : 'Made to Order'}</span>
@@ -349,7 +341,7 @@ const ProductsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-gradient-to-b from-slate-50 via-white to-white font-sans">
+      <div className="bg-blue-50 font-sans">
 
         {/* Header Section */}
         <section className="relative pt-24 sm:pt-28 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">

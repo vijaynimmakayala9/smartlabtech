@@ -38,7 +38,7 @@ export default function About({ id }) {
 
   if (loading) {
     return (
-      <section id={id} className="bg-white py-8 sm:py-10 lg:py-16 min-h-[300px] flex items-center justify-center">
+      <section id={id} className="bg-blue-50 py-8 sm:py-10 lg:py-16 min-h-[300px] flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-4 border-sky-400 border-t-transparent animate-spin" />
       </section>
     );
@@ -52,7 +52,7 @@ export default function About({ id }) {
     : [];
 
   return (
-    <section id={id} className="bg-white py-8 sm:py-10 lg:py-16">
+    <section id={id} className="bg-blue-50 py-8 sm:py-10 lg:py-16">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-16 items-center">
 

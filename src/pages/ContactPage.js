@@ -144,8 +144,8 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', subject: '', message: ''
   });
-  const [errors, setErrors]     = useState({});
-  const [loading, setLoading]   = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -158,10 +158,10 @@ const ContactPage = () => {
   const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
 
   // Resolve hero values: use API data when available, else fallback
-  const heroTag         = heroData?.tag         || HERO_FALLBACK.tag;
-  const heroTitle       = heroData?.title       || HERO_FALLBACK.title;
+  const heroTag = heroData?.tag || HERO_FALLBACK.tag;
+  const heroTitle = heroData?.title || HERO_FALLBACK.title;
   const heroDescription = heroData?.description || HERO_FALLBACK.description;
-  const heroImage       = heroData?.image        || HERO_FALLBACK.image;
+  const heroImage = heroData?.image || HERO_FALLBACK.image;
 
   const inputClass = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200";
 
@@ -345,18 +345,25 @@ const ContactPage = () => {
               <FaPhoneAlt size={14} /> Call Us Now
             </a>
             <a
-              href={`mailto:${emails[0]?.email || 'info@smartlabtech.net'}`}
+              href={
+                /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
+                  ? `mailto:${emails[0]?.email || 'info@smartlabtech.net'}`
+                  : `https://mail.google.com/mail/?view=cm&fs=1&to=${emails[0]?.email || 'info@smartlabtech.net'}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
               className="relative overflow-hidden inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              <FaEnvelope size={14} /> Send Email
+              <FaEnvelope size={14} />
+              Send Email
             </a>
           </motion.div>
         </div>
       </section>
 
       {/* ── Main Content ─────────────────────────────────────────────── */}
-      <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 py-20">
+      <div className="max-w-8xl mx-auto bg-blue-50 px-4 sm:px-8 lg:px-20 py-20">
         <div className="grid md:grid-cols-2 gap-12 items-start">
 
           {/* LEFT - Contact Info */}
@@ -429,13 +436,13 @@ const ContactPage = () => {
                   <h4 className="font-semibold text-sm text-slate-700" style={{ fontFamily: "'Outfit', sans-serif" }}>Business Hours</h4>
                 </div>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center">
+                  {/* <div className="flex justify-between items-center">
                     <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Monday – Sunday</span>
                     <span className="text-blue-600 font-semibold bg-blue-50 px-2.5 py-0.5 rounded-full text-xs border border-blue-200" style={{ fontFamily: "'Outfit', sans-serif" }}>9:00 AM – 6:00 PM</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500" style={{ fontFamily: "'Outfit', sans-serif" }}>Availability</span>
-                    <span className="text-slate-400 text-xs" style={{ fontFamily: "'Outfit', sans-serif" }}>24/7</span>
+                    <span className="text-slate-900 text-xs" style={{ fontFamily: "'Outfit', sans-serif" }}>24/7</span>
                   </div>
                 </div>
               </div>
@@ -546,7 +553,7 @@ const ContactPage = () => {
                       className={`relative overflow-hidden w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all ${loading
                         ? 'bg-slate-400 cursor-not-allowed'
                         : 'bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0'
-                      }`}
+                        }`}
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
                       {loading ? (
@@ -565,7 +572,7 @@ const ContactPage = () => {
 
       {/* ── Map ─────────────────────────────────────────────────────── */}
       <Reveal>
-        <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20 pb-20">
+        <div className="max-w-8xl mx-auto bg-blue-50 px-4 sm:px-8 lg:px-20 pb-20">
           <div className="rounded-3xl overflow-hidden border border-slate-200 h-[380px] relative shadow-lg">
             <div className="absolute inset-0 z-10 pointer-events-none rounded-3xl ring-1 ring-inset ring-slate-200/50" />
             <iframe

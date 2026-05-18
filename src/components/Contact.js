@@ -162,11 +162,11 @@ export default function Contact({ id }) {
     { icon: MapPin, label: 'Address',        value: getAddressDisplay(), color: 'text-blue-900',  bg: 'bg-blue-900/[0.07]',  border: 'hover:border-blue-900' },
     { icon: Phone,  label: 'Phone',          value: getPhoneDisplay(),   color: 'text-sky-600',   bg: 'bg-sky-600/[0.07]',   border: 'hover:border-sky-600'  },
     { icon: Mail,   label: 'Email',          value: getEmailDisplay(),   color: 'text-sky-500',   bg: 'bg-sky-500/[0.07]',   border: 'hover:border-sky-500'  },
-    { icon: Clock,  label: 'Business Hours', value: 'Monday – Sunday\n Availability: 24/7',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' },
+    { icon: Clock,  label: 'Business Hours', value: 'Availability: 24/7',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' }, //'Monday – Sunday\n Availability: 24/7'
   ];
 
   return (
-    <section id={id} className="bg-slate-50 py-12 sm:py-12 lg:py-12">
+    <section id={id} className="bg-blue-50 py-12 sm:py-12 lg:py-12">
       <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
 
         {/* ── Header ── */}

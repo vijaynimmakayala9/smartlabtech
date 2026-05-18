@@ -442,7 +442,7 @@ export default function SearchResults() {
   return (
     <>
       <Navbar />
-      <div className="bg-gradient-to-b from-slate-50 via-white to-white font-sans min-h-screen">
+      <div className="bg-blue-50 font-sans min-h-screen">
         
         {/* Hero Section with Background Image and Blue Overlay */}
         <section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">

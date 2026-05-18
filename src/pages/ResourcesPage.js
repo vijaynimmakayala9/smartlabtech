@@ -257,7 +257,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* Quick Links Navigation */}
-      <section className="bg-white py-8 border-b border-slate-100 sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
+      <section className="bg-blue-50 py-8 border-b border-slate-100 sticky top-0 z-40">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <div className="flex flex-wrap justify-center gap-3">
             {[
@@ -283,7 +283,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 1. Technical Articles Section */}
-      <section id="articles" className="py-20 bg-white">
+      <section id="articles" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -327,7 +327,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 2. Product Brochures Section */}
-      <section id="brochures" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
+      <section id="brochures" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -369,7 +369,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 3. Service Documents Section */}
-      <section id="service-docs" className="py-20 bg-white">
+      <section id="service-docs" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -408,7 +408,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 4. Videos Section */}
-      <section id="videos" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
+      <section id="videos" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -447,7 +447,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 5. Case Studies Section */}
-      <section id="case-studies" className="py-20 bg-white">
+      <section id="case-studies" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -486,7 +486,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 6. FAQ Section */}
-      <section id="faq" className="py-20 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
+      <section id="faq" className="py-20 bg-blue-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -513,7 +513,7 @@ const ResourcesPage = () => {
       </section>
 
       {/* 7. Certifications Section */}
-      <section id="certifications" className="py-20 bg-white">
+      <section id="certifications" className="py-20 bg-blue-50">
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">
           <Reveal className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-3">
@@ -548,7 +548,7 @@ const ResourcesPage = () => {
 
       {/* CTA Section */}
       <Reveal>
-        <div className="py-20 px-4 bg-[linear-gradient(135deg,rgba(15,35,86,0.05)_0%,rgba(30,58,138,0.03)_50%,rgba(14,165,233,0.05)_100%)]">
+        <div className="py-20 px-4 bg-blue-50">
           <div className="max-w-5xl mx-auto text-center">
             <div className="rounded-3xl p-12 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>

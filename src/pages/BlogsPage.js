@@ -93,7 +93,7 @@ const BlogsPage = () => {
     return (
         <>
             <Navbar />
-            <main className="bg-gradient-to-b from-gray-50 to-white">
+            <main className="bg-blue-50">
                 {/* Hero Section - Dynamic from API */}
                 <div className="relative overflow-hidden text-white min-h-[650px] flex items-center justify-center">
 

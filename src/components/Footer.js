@@ -95,7 +95,7 @@ export default function Footer({ id }) {
     if (footerData.products && footerData.products.length > 0) {
       links.Products = footerData.products.map(product => ({
         name: product.name,
-        path: `/products/${product.productId?._id || product.productId}`,
+        path: `/product/${product.productId?._id || product.productId}`,
         slug: product.productId?.slug
       }));
     } else {

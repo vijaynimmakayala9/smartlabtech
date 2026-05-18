@@ -120,7 +120,7 @@ export default function Testimonials({ id }) {
       <section
         id={id}
         ref={sectionRef}
-        className="relative bg-slate-50 py-8 sm:py-8 lg:py-8 overflow-hidden"
+        className="relative bg-blue-50 py-8 sm:py-8 lg:py-8"
       >
         {/* Header */}
         <div className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-20">

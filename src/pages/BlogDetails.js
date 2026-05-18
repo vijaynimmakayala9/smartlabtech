@@ -125,7 +125,7 @@ const BlogDetailsPage = () => {
     return (
         <>
             <Navbar />
-            <main className="bg-gray-50">
+            <main className="bg-blue-50">
                 {/* Hero Section */}
                 <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
                     <img
