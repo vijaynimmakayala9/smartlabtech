@@ -422,7 +422,7 @@ export default function Navbar() {
     setSearchItems([]);
     setIsSearching(false);
     if (item.type === 'product' && item.id) {
-      navigate(`/product/${item.slug || item.id}`);
+      navigate(`/product/${item.id}`);
     }
   };
 
