@@ -57,14 +57,14 @@ function useContactInfo() {
 }
 
 export default function Contact({ id }) {
-  const [form, setForm]           = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [errors, setErrors]       = useState({});
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
+  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [apiError, setApiError]   = useState('');
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   // ── Subjects from API ──
-  const [subjects, setSubjects]         = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [subjectsLoading, setSubjectsLoading] = useState(false);
 
   // ── Contact Info from API ──
@@ -159,10 +159,10 @@ export default function Contact({ id }) {
   };
 
   const CONTACT_INFO = [
-    { icon: MapPin, label: 'Address',        value: getAddressDisplay(), color: 'text-blue-900',  bg: 'bg-blue-900/[0.07]',  border: 'hover:border-blue-900' },
-    { icon: Phone,  label: 'Phone',          value: getPhoneDisplay(),   color: 'text-sky-600',   bg: 'bg-sky-600/[0.07]',   border: 'hover:border-sky-600'  },
-    { icon: Mail,   label: 'Email',          value: getEmailDisplay(),   color: 'text-sky-500',   bg: 'bg-sky-500/[0.07]',   border: 'hover:border-sky-500'  },
-    { icon: Clock,  label: 'Business Hours', value: 'Availability: 24/7',          color: 'text-blue-700',  bg: 'bg-blue-700/[0.07]',  border: 'hover:border-blue-700' }, //'Monday – Sunday\n Availability: 24/7'
+    { icon: MapPin, label: 'Address', value: getAddressDisplay(), color: 'text-blue-900', bg: 'bg-blue-900/[0.07]', border: 'hover:border-blue-900' },
+    { icon: Phone, label: 'Phone', value: getPhoneDisplay(), color: 'text-sky-600', bg: 'bg-sky-600/[0.07]', border: 'hover:border-sky-600' },
+    { icon: Mail, label: 'Email', value: getEmailDisplay(), color: 'text-sky-500', bg: 'bg-sky-500/[0.07]', border: 'hover:border-sky-500' },
+    { icon: Clock, label: 'Business Hours', value: 'Availability: 24/7', color: 'text-blue-700', bg: 'bg-blue-700/[0.07]', border: 'hover:border-blue-700' }, //'Monday – Sunday\n Availability: 24/7'
   ];
 
   return (
@@ -272,32 +272,81 @@ export default function Contact({ id }) {
 
                     {/* Name + Phone row */}
                     <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
-                      {[['name', 'Full Name', 'text'], ['phone', 'Phone Number', 'tel']].map(([key, ph, type]) => (
+
+                      {[
+                        ['name', 'Full Name', 'text'],
+                        ['phone', 'Phone Number', 'tel']
+                      ].map(([key, ph, type]) => (
+
                         <div key={key}>
+
                           <input
                             type={type}
                             placeholder={ph}
                             value={form[key]}
-                            onChange={(e) => { setForm({ ...form, [key]: e.target.value }); setErrors({ ...errors, [key]: '' }); }}
+                            onChange={(e) => {
+
+                              let value = e.target.value;
+
+                              // Phone: numbers only + max 10 digits
+                              if (key === 'phone') {
+                                value = value.replace(/\D/g, '').slice(0, 10);
+                              }
+
+                              setForm({
+                                ...form,
+                                [key]: value
+                              });
+
+                              setErrors({
+                                ...errors,
+                                [key]: ''
+                              });
+                            }}
                             className={inputCls(key)}
                           />
+
                           {errors[key] && (
-                            <span className="text-[11px] text-red-400 mt-1 block">{errors[key]}</span>
+                            <span className="text-[11px] text-red-400 mt-1 block">
+                              {errors[key]}
+                            </span>
                           )}
+
                         </div>
+
                       ))}
+
                     </div>
 
                     {/* Email */}
                     <div>
+
                       <input
                         type="email"
                         placeholder="Email Address"
                         value={form.email}
-                        onChange={(e) => { setForm({ ...form, email: e.target.value }); setErrors({ ...errors, email: '' }); }}
+                        onChange={(e) => {
+
+                          setForm({
+                            ...form,
+                            email: e.target.value
+                          });
+
+                          setErrors({
+                            ...errors,
+                            email: ''
+                          });
+
+                        }}
                         className={inputCls('email')}
                       />
-                      {errors.email && <span className="text-[11px] text-red-400 mt-1 block">{errors.email}</span>}
+
+                      {errors.email && (
+                        <span className="text-[11px] text-red-400 mt-1 block">
+                          {errors.email}
+                        </span>
+                      )}
+
                     </div>
 
                     {/* Subject — from API */}
@@ -345,11 +394,10 @@ export default function Contact({ id }) {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`flex items-center justify-center gap-2.5 py-3.5 px-7 rounded-xl text-sm font-bold text-white transition-all duration-300 w-full ${
-                        loading
+                      className={`flex items-center justify-center gap-2.5 py-3.5 px-7 rounded-xl text-sm font-bold text-white transition-all duration-300 w-full ${loading
                           ? 'bg-slate-400 cursor-not-allowed shadow-none'
                           : 'bg-gradient-to-r from-blue-900 to-sky-500 shadow-[0_6px_20px_rgba(30,58,138,0.25)] hover:opacity-90 active:scale-[0.98]'
-                      }`}
+                        }`}
                     >
                       {loading ? (
                         <>

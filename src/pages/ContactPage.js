@@ -493,8 +493,33 @@ const ContactPage = () => {
 
                     {/* Phone */}
                     <div>
-                      <input type="tel" name="phone" placeholder="Phone Number (10 digits)" value={formData.phone} onChange={handleChange} className={`${inputClass} ${errors.phone ? 'border-red-400' : ''}`} />
-                      {errors.phone && <p className="text-[11px] text-red-400 mt-1">{errors.phone}</p>}
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number (10 digits)"
+                        value={formData.phone}
+                        onChange={(e) => {
+
+                          const value = e.target.value
+                            .replace(/\D/g, '') // numbers only
+                            .slice(0, 10); // max 10 digits
+
+                          handleChange({
+                            target: {
+                              name: 'phone',
+                              value
+                            }
+                          });
+
+                        }}
+                        className={`${inputClass} ${errors.phone ? 'border-red-400' : ''}`}
+                      />
+
+                      {errors.phone && (
+                        <p className="text-[11px] text-red-400 mt-1">
+                          {errors.phone}
+                        </p>
+                      )}
                     </div>
 
                     {/* Email */}

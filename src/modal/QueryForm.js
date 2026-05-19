@@ -232,8 +232,22 @@ export function QueryForm({ onClose }) {
               {/* Phone + Company */}
 
               <Field label="Phone *">
-                <Input icon={Phone} type="tel" placeholder="10-digit number" value={form.phone} onChange={set('phone')} error={errors.phone} />
-              </Field>
+                <Input
+                  icon={Phone}
+                  type="tel"
+                  placeholder="10-digit number"
+                  value={form.phone}
+                  onChange={(e) => {
+                    // numbers only + max 10 digits
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+
+                    setForm((prev) => ({
+                      ...prev,
+                      phone: value
+                    }));
+                  }}
+                  error={errors.phone}
+                />              </Field>
 
               {/* Email */}
               <Field label="Email Address *">

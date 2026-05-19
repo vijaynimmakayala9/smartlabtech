@@ -285,7 +285,23 @@ export function QuoteForm({ onClose }) {
                   <Input icon={User} placeholder="Your name" value={form.name} onChange={set('name')} error={errors.name} />
                 </Field>
                 <Field label="Phone *">
-                  <Input icon={Phone} type="tel" placeholder="10-digit" value={form.phone} onChange={set('phone')} error={errors.phone} />
+                  <Input
+                    icon={Phone}
+                    type="tel"
+                    placeholder="10-digit"
+                    value={form.phone}
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .replace(/\D/g, '') // numbers only
+                        .slice(0, 10); // max 10 digits
+
+                      setForm((prev) => ({
+                        ...prev,
+                        phone: value,
+                      }));
+                    }}
+                    error={errors.phone}
+                  />
                 </Field>
               </div>
 
@@ -315,7 +331,7 @@ export function QuoteForm({ onClose }) {
                   <option value="">{loadingCategories ? 'Loading categories...' : 'Select a category'}</option>
                   {categories.map(cat => (
                     <option key={cat._id} value={cat._id}>
-                      {cat.name} 
+                      {cat.name}
                     </option>
                   ))}
                 </Input>
