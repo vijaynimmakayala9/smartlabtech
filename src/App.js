@@ -19,6 +19,7 @@ import AdminPanel from './pages/AdminPannel.js';
 import PrivacyPolicy from './Policies/PrivacyPolicy.js';
 import TermsOfService from './Policies/TermsOfService.js';
 import CookiePolicy from './Policies/CookiePolicy.js';
+import SmartApplicationLab from './pages/SmartApplicationLab.js';
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
         <Route path='/career' element={<Careers />} />
         <Route path='/support' element={<Support />} />
         <Route path='/resources' element={<ResourcesPage />} />
+        <Route path='/smart-application-lab' element={<SmartApplicationLab />} />
         <Route path='/search' element={<SearchResults />} />
         <Route path='/admin' element={<AdminPanel />} />
 
