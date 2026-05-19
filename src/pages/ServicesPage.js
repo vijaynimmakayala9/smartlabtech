@@ -7,6 +7,7 @@ import {
 import { ArrowRight, Phone, Mail, MapPin, Clock, Shield, Loader2, AlertCircle } from "lucide-react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import ServiceModal from "../modal/ServiceModal";
 
 /* ─── Google Fonts ─────────── */
 const FontLink = () => (
@@ -50,18 +51,26 @@ const ServicesPage = () => {
   const [servicesData, setServicesData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
+  
   const [formData, setFormData] = useState({
-    company: '',
+    companyDetails: '',
+    unit: '',
+    location: '',
     contactPerson: '',
     designation: '',
-    contactNumber: '',
+    contactNo: '',
     email: '',
     instrumentType: '',
-    modelNumber: '',
-    serialNumber: '',
+    modelNo: '',
+    serialNo: '',
+    natureOfProblem: '',
     contractType: '',
-    problem: ''
+    poNumber: ''
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -97,20 +106,110 @@ const ServicesPage = () => {
     }
   };
 
+  // Validation function for contact number
+  const validateContactNo = (contactNo) => {
+    // Remove any spaces or special characters for validation
+    const cleanNumber = contactNo.replace(/[\s\-\(\)\+]/g, '');
+    
+    if (!cleanNumber) {
+      return { isValid: false, message: 'Contact number is required' };
+    }
+    
+    // Check if it contains only digits
+    if (!/^\d+$/.test(cleanNumber)) {
+      return { isValid: false, message: 'Contact number should contain only digits' };
+    }
+    
+    // Check length (10 digits for mobile, or 10-12 for landline with STD code)
+    if (cleanNumber.length < 10 || cleanNumber.length > 12) {
+      return { isValid: false, message: 'Contact number should be between 10-12 digits' };
+    }
+    
+    // Check if starts with valid Indian mobile prefixes (6-9) for 10-digit numbers
+    if (cleanNumber.length === 10 && !/^[6-9]/.test(cleanNumber)) {
+      return { isValid: false, message: 'Mobile number should start with 6,7,8, or 9' };
+    }
+    
+    return { isValid: true, message: '' };
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    // Special handling for contactNo to allow only digits
+    if (name === 'contactNo') {
+      const digitsOnly = value.replace(/[^\d]/g, '');
+      setFormData({ ...formData, [name]: digitsOnly });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    
+    // Clear submit message when user starts typing
+    if (submitMessage.text) {
+      setSubmitMessage({ type: '', text: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Here you would typically send the form data to your backend
-    // For now, just show an alert
-    console.log('Form submitted:', formData);
-    alert('Service request submitted successfully! Our team will contact you shortly.');
-
-    // Optionally reset form
-    // setFormData({ company: '', contactPerson: '', ... });
+    
+    // Validate contact number before submission
+    const contactValidation = validateContactNo(formData.contactNo);
+    if (!contactValidation.isValid) {
+      setSubmitMessage({ type: 'error', text: contactValidation.message });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setSubmitMessage({ type: '', text: '' });
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/servicepage/submit', {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setSubmitMessage({ type: 'success', text: 'Service request submitted successfully! Our team will contact you shortly.' });
+        // Reset form after successful submission
+        setFormData({
+          companyDetails: '',
+          unit: '',
+          location: '',
+          contactPerson: '',
+          designation: '',
+          contactNo: '',
+          email: '',
+          instrumentType: '',
+          modelNo: '',
+          serialNo: '',
+          natureOfProblem: '',
+          contractType: '',
+          poNumber: ''
+        });
+      } else {
+        setSubmitMessage({ type: 'error', text: data.message || 'Failed to submit service request. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitMessage({ type: 'error', text: 'Network error. Please check your connection and try again.' });
+    } finally {
+      setIsSubmitting(false);
+      
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => {
+        if (submitMessage.type === 'success') {
+          setSubmitMessage({ type: '', text: '' });
+        }
+      }, 5000);
+    }
   };
 
   // Default stats if API doesn't provide them
@@ -419,15 +518,51 @@ const ServicesPage = () => {
 
           <Reveal>
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-10 border border-slate-100 shadow-lg">
+              {/* Submit Message Display */}
+              {submitMessage.text && (
+                <div className={`mb-6 p-4 rounded-xl ${
+                  submitMessage.type === 'success' 
+                    ? 'bg-green-50 border border-green-200 text-green-700' 
+                    : 'bg-red-50 border border-red-200 text-red-700'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    {submitMessage.type === 'success' ? (
+                      <FaCheckCircle className="text-green-500" />
+                    ) : (
+                      <AlertCircle className="text-red-500" size={18} />
+                    )}
+                    <span className="text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                      {submitMessage.text}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
                 <input
                   type="text"
-                  name="company"
-                  placeholder="Company Details / Location"
-                  value={formData.company}
+                  name="companyDetails"
+                  placeholder="Company Details"
+                  value={formData.companyDetails}
                   onChange={handleChange}
                   className={inputClass}
                   required
+                />
+                <input
+                  type="text"
+                  name="unit"
+                  placeholder="Unit / Department"
+                  value={formData.unit}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Location (City, State)"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className={inputClass}
                 />
                 <input
                   type="text"
@@ -441,20 +576,27 @@ const ServicesPage = () => {
                 <input
                   type="text"
                   name="designation"
-                  placeholder="Designation / Department"
+                  placeholder="Designation"
                   value={formData.designation}
                   onChange={handleChange}
                   className={inputClass}
                 />
-                <input
-                  type="tel"
-                  name="contactNumber"
-                  placeholder="Contact Number"
-                  value={formData.contactNumber}
-                  onChange={handleChange}
-                  className={inputClass}
-                  required
-                />
+                <div>
+                  <input
+                    type="tel"
+                    name="contactNo"
+                    placeholder="Contact Number (10-12 digits)"
+                    value={formData.contactNo}
+                    onChange={handleChange}
+                    className={inputClass}
+                    required
+                  />
+                  {formData.contactNo && !validateContactNo(formData.contactNo).isValid && (
+                    <p className="text-xs text-red-500 mt-1 ml-1">
+                      {validateContactNo(formData.contactNo).message}
+                    </p>
+                  )}
+                </div>
                 <input
                   type="email"
                   name="email"
@@ -474,49 +616,70 @@ const ServicesPage = () => {
                 />
                 <input
                   type="text"
-                  name="modelNumber"
+                  name="modelNo"
                   placeholder="Model Number"
-                  value={formData.modelNumber}
+                  value={formData.modelNo}
                   onChange={handleChange}
                   className={inputClass}
                 />
                 <input
                   type="text"
-                  name="serialNumber"
+                  name="serialNo"
                   placeholder="Serial Number"
-                  value={formData.serialNumber}
+                  value={formData.serialNo}
                   onChange={handleChange}
                   className={inputClass}
                 />
                 <input
                   type="text"
                   name="contractType"
-                  placeholder="Contract Type / PO Number"
+                  placeholder="Contract Type (AMC / Non-AMC)"
                   value={formData.contractType}
                   onChange={handleChange}
                   className={`${inputClass} md:col-span-2`}
                 />
+                <input
+                  type="text"
+                  name="poNumber"
+                  placeholder="PO Number (if applicable)"
+                  value={formData.poNumber}
+                  onChange={handleChange}
+                  className={`${inputClass} md:col-span-2`}
+                />
                 <textarea
-                  name="problem"
+                  name="natureOfProblem"
                   rows="4"
                   placeholder="Nature of Problem"
-                  value={formData.problem}
+                  value={formData.natureOfProblem}
                   onChange={handleChange}
                   className={`${inputClass} md:col-span-2 resize-none`}
                   required
                 />
                 <button
                   type="submit"
-                  className="relative overflow-hidden md:col-span-2 text-white py-3.5 rounded-xl font-semibold text-sm tracking-wide bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
+                  disabled={isSubmitting}
+                  className="relative overflow-hidden md:col-span-2 text-white py-3.5 rounded-xl font-semibold text-sm tracking-wide bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
-                  Submit Service Request
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Submitting...</span>
+                    </div>
+                  ) : (
+                    "Submit Service Request"
+                  )}
                 </button>
               </form>
             </div>
           </Reveal>
         </div>
       </section>
+
+      <ServiceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <Footer />
     </>

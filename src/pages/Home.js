@@ -7,6 +7,7 @@ import Journey from '../components/Journey.js';
 import Contact from '../components/Contact.js';
 import Footer from '../components/Footer.js';
 import Testimonials from '../components/Testinomials.js';
+import BrandMarquee from "../components/BrandsScroll.js";
 
 export default function Home() {
   const isAnimating = useRef(false);
@@ -134,6 +135,7 @@ export default function Home() {
       <Navbar />
       <Hero id="hero" />
       <About id="about" />
+      <BrandMarquee id="brands" />
       <Journey id="journey" />
       <Testimonials id="testimonials" />
       <Contact id="contact" />

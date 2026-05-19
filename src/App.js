@@ -20,6 +20,7 @@ import PrivacyPolicy from './Policies/PrivacyPolicy.js';
 import TermsOfService from './Policies/TermsOfService.js';
 import CookiePolicy from './Policies/CookiePolicy.js';
 import SmartApplicationLab from './pages/SmartApplicationLab.js';
+import NotFound from './views/PageNotFound.js';
 
 const App = () => {
   return (
@@ -46,6 +47,8 @@ const App = () => {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/cookies" element={<CookiePolicy />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   )
