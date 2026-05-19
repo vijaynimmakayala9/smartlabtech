@@ -95,8 +95,8 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
   return (
     <div ref={searchContainerRef} className="relative w-full max-w-4xl mx-auto">
       <div className={`relative rounded-3xl transition-all duration-500 ${isFocused
-          ? 'shadow-2xl shadow-blue-500/20'
-          : 'shadow-lg shadow-slate-200/50'
+        ? 'shadow-2xl shadow-blue-500/20'
+        : 'shadow-lg shadow-slate-200/50'
         }`}>
 
         <div className={`absolute inset-0 rounded-3xl transition-all duration-500 overflow-hidden ${isFocused ? 'opacity-100' : 'opacity-0'
@@ -110,8 +110,8 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
         <div className="relative z-10">
           <div className="flex items-center gap-2 p-2 sm:p-3">
             <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${isFocused
-                ? 'bg-white/20 text-white'
-                : 'bg-gradient-to-br from-blue-50 to-sky-50 text-blue-600'
+              ? 'bg-white/20 text-white'
+              : 'bg-gradient-to-br from-blue-50 to-sky-50 text-blue-600'
               }`}>
               <Search size={20} className="sm:w-5 sm:h-5" />
             </div>
@@ -132,8 +132,8 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
               }}
               onBlur={() => setIsFocused(false)}
               className={`flex-1 bg-transparent border-none text-base sm:text-lg py-2 px-1 outline-none placeholder:text-slate-400 transition-colors duration-300 ${isFocused
-                  ? 'text-white placeholder:text-white/60'
-                  : 'text-slate-800'
+                ? 'text-white placeholder:text-white/60'
+                : 'text-slate-800'
                 }`}
             />
 
@@ -144,8 +144,8 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
                 exit={{ opacity: 0, scale: 0.8 }}
                 onClick={handleClear}
                 className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${isFocused
-                    ? 'bg-white/20 text-white hover:bg-white/30'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  ? 'bg-white/20 text-white hover:bg-white/30'
+                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                   }`}
                 aria-label="Clear search"
               >
@@ -163,7 +163,7 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-xl z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-xl z-50"
           >
             {recentSearches.length > 0 && (
               <div>
@@ -191,24 +191,6 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
                 ))}
               </div>
             )}
-
-            <div className="px-4 py-2 bg-slate-50 border-t border-slate-100">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp size={12} className="text-slate-400" />
-                <span className="text-xs font-semibold text-slate-500">Popular Searches</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {popularSearches.map((item) => (
-                  <button
-                    key={item.term}
-                    onClick={() => handleRecentClick(item.term)}
-                    className="px-3 py-1.5 bg-white text-slate-600 text-xs rounded-full border border-slate-200 hover:bg-slate-100 hover:border-blue-300 transition"
-                  >
-                    {item.icon} {item.term}
-                  </button>
-                ))}
-              </div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -505,7 +487,7 @@ export default function SearchResults() {
       <div className="bg-blue-50 font-sans min-h-screen">
 
         {/* Hero Section with Background Image and Blue Overlay */}
-        <section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
 
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -595,7 +577,7 @@ export default function SearchResults() {
 
         {/* Filters Bar */}
         {!loading && filteredResults.length > 0 && (
-          <section className="sticky top-[106px] sm:top-[114px] lg:top-[122px] z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8">
+          <section className="top-[106px] sm:top-[114px] lg:top-[122px] z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8">
             <div className="max-w-8xl mx-auto">
               <div className="flex flex-wrap items-center gap-3">
                 {categories.length > 1 && (
