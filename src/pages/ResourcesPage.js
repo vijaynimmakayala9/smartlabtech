@@ -1,18 +1,19 @@
 // src/pages/ResourcesPage.js
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { 
-  FaFilePdf, FaVideo, FaBookOpen, FaToolbox, FaChartLine, 
+import {
+  FaFilePdf, FaVideo, FaBookOpen, FaToolbox, FaChartLine,
   FaShieldAlt, FaDownload, FaPlay, FaArrowRight, FaSearch,
   FaMicroscope, FaFlask, FaCogs, FaTachometerAlt, FaCheckCircle,
   FaNewspaper, FaRegFileAlt, FaUserTie, FaIndustry, FaQuestionCircle, FaAward
 } from "react-icons/fa";
-import { 
-  ChevronDown, Download, Eye, FileText, BookOpen, 
+import {
+  ChevronDown, Download, Eye, FileText, BookOpen,
   Video, Shield, Award, Users, Calendar, Loader2, AlertCircle
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet";
 
 /* ─── Google Fonts ─────────── */
 const FontLink = () => (
@@ -57,9 +58,8 @@ function FAQItem({ faq, index }) {
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
-          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-            isOpen ? 'bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white' : 'bg-slate-100 text-slate-500'
-          }`}
+          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white' : 'bg-slate-100 text-slate-500'
+            }`}
         >
           <ChevronDown size={14} />
         </motion.div>
@@ -87,7 +87,7 @@ const ResourcesPage = () => {
   const [resourceData, setResourceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -101,7 +101,7 @@ const ResourcesPage = () => {
       setLoading(true);
       const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/resources');
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         setResourceData(data.data);
       } else {
@@ -165,7 +165,7 @@ const ResourcesPage = () => {
             <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Unable to Load Page</h2>
             <p className="text-slate-600">{error}</p>
-            <button 
+            <button
               onClick={fetchResourceData}
               className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all"
             >
@@ -180,6 +180,38 @@ const ResourcesPage = () => {
 
   return (
     <>
+
+      <Helmet>
+
+        <title>Resources & Knowledge Center | SmartLabTech</title>
+
+        <meta
+          name="description"
+          content="Access SmartLabTech resources including articles, laboratory guides, documentation, case studies, FAQs, and scientific knowledge materials."
+        />
+
+        <meta
+          name="keywords"
+          content="lab resources, scientific articles, laboratory documentation, case studies, FAQs, SmartLabTech resources"
+        />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="Resources & Knowledge Center | SmartLabTech" />
+
+        <meta
+          property="og:description"
+          content="Explore scientific resources, laboratory guides, articles, and case studies from SmartLabTech."
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/resources" />
+
+      </Helmet>
+
       <FontLink />
       <Navbar />
 
@@ -235,7 +267,7 @@ const ResourcesPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.22 }}
-            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-white/80 text-center mx-auto" 
+            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-white/80 text-center mx-auto"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             {hero.description || "Access technical articles, product brochures, service documents, and educational resources to support your laboratory operations."}
@@ -288,10 +320,10 @@ const ResourcesPage = () => {
                 <Reveal key={article._id || i} delay={i * 0.1}>
                   <div className="group bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
                     <div className="h-40 overflow-hidden">
-                      <img 
-                        src={article.image} 
-                        alt={article.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                     <div className="p-5 flex-1 flex flex-col">

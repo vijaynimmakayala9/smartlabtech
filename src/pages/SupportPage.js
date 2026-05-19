@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Helmet } from 'react-helmet';
 
 const FontLink = () => (
   <style>{`
@@ -82,9 +83,8 @@ function FAQItem({ faq, index }) {
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
-          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-            isOpen ? 'bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white' : 'bg-slate-100 text-slate-500'
-          }`}
+          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] text-white' : 'bg-slate-100 text-slate-500'
+            }`}
         >
           <ChevronDown size={14} />
         </motion.div>
@@ -110,7 +110,7 @@ function FAQItem({ faq, index }) {
 
 function ServiceCard({ service, index }) {
   const IconComponent = getServiceIcon(service.title);
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -134,7 +134,7 @@ function ServiceCard({ service, index }) {
 
 function FeatureCard({ feature, index }) {
   const IconComponent = getFeatureIcon(feature.title);
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -158,7 +158,7 @@ export default function Support() {
   const [supportData, setSupportData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -179,7 +179,7 @@ export default function Support() {
         }
       });
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         setSupportData(data.data);
       } else {
@@ -219,7 +219,7 @@ export default function Support() {
             <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Unable to Load Page</h2>
             <p className="text-slate-600">{error || 'Support page data not available'}</p>
-            <button 
+            <button
               onClick={fetchSupportPage}
               className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all"
             >
@@ -241,27 +241,59 @@ export default function Support() {
   const supportCta = supportData.supportCta;
 
   // Get services from supportSolutions
-  const services = supportSolutions?.cards?.length > 0 
-    ? supportSolutions.cards 
+  const services = supportSolutions?.cards?.length > 0
+    ? supportSolutions.cards
     : [];
 
   // Get features from supportCards
-  const features = supportCards.length > 0 
-    ? supportCards 
+  const features = supportCards.length > 0
+    ? supportCards
     : [];
 
   // Get FAQ items
-  const faqs = supportFaq?.faqs?.length > 0 
-    ? supportFaq.faqs 
+  const faqs = supportFaq?.faqs?.length > 0
+    ? supportFaq.faqs
     : [];
 
   // Get life cycle points
-  const lifeCyclePoints = supportLifeCycle?.points?.length > 0 
+  const lifeCyclePoints = supportLifeCycle?.points?.length > 0
     ? supportLifeCycle.points.map(p => p.point)
     : [];
 
   return (
     <>
+
+      <Helmet>
+
+        <title>Customer Support & Technical Assistance | SmartLabTech</title>
+
+        <meta
+          name="description"
+          content="Get expert customer support and technical assistance for laboratory equipment, scientific instruments, troubleshooting, servicing, and maintenance."
+        />
+
+        <meta
+          name="keywords"
+          content="technical support, customer support, lab equipment support, troubleshooting, SmartLabTech assistance"
+        />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="Customer Support & Technical Assistance | SmartLabTech" />
+
+        <meta
+          property="og:description"
+          content="Reliable technical support and servicing solutions for laboratory instruments and scientific equipment."
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/support" />
+
+      </Helmet>
+
       <FontLink />
       <Navbar />
 
@@ -321,7 +353,7 @@ export default function Support() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.22 }}
-            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-center text-white/80" 
+            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-center text-white/80"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             {supportHero?.description || "Our team of experienced, factory-trained, certified service technicians are committed to support your service needs across India."}

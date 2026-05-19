@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Helmet } from 'react-helmet';
 
 const FontLink = () => (
     <style>{`
@@ -126,6 +127,38 @@ export default function SmartApplicationLab() {
 
     return (
         <>
+
+            <Helmet>
+
+                <title>Application Laboratory Solutions | SmartLabTech</title>
+
+                <meta
+                    name="description"
+                    content="Discover SmartLabTech application laboratory solutions for research, testing, analysis, quality control, healthcare, pharma, and industrial applications."
+                />
+
+                <meta
+                    name="keywords"
+                    content="application laboratory, lab testing solutions, research applications, pharma laboratory, analytical solutions"
+                />
+
+                <meta name="robots" content="index, follow" />
+
+                <meta property="og:title" content="Application Laboratory Solutions | SmartLabTech" />
+
+                <meta
+                    property="og:description"
+                    content="Advanced laboratory application solutions for scientific research, analysis, and industrial testing."
+                />
+
+                <meta property="og:type" content="website" />
+
+                <meta property="og:image" content="/logo.png" />
+
+                <link rel="canonical" href="https://smartlabtech.com/application-lab" />
+
+            </Helmet>
+
             <Navbar />
             <FontLink />
 

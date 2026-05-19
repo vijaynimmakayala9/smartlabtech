@@ -182,20 +182,23 @@ export default function Footer({ id }) {
                   alt="SmartLabTech"
                   className="w-9 h-9 object-contain rounded-lg"
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    if (e.target.nextSibling) {
-                      e.target.nextSibling.style.display = 'flex';
+                    e.target.style.display = "none";
+
+                    if (e.target.nextElementSibling) {
+                      e.target.nextElementSibling.style.display = "flex";
                     }
                   }}
                 />
+
                 <div
                   className="hidden w-9 h-9 items-center justify-center rounded-lg flex-shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg,#1e3a8a,#0ea5e9)'
+                    background: "linear-gradient(135deg,#1e3a8a,#0ea5e9)",
                   }}
                 >
                   <FlaskConical size={18} color="#fff" />
                 </div>
+
                 <span className="font-display text-lg font-bold text-white">
                   SmartLab<span className="text-sky-400">Tech</span>
                 </span>

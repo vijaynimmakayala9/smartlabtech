@@ -1,14 +1,15 @@
 // src/pages/AboutPage.js
 import React, { useRef, useEffect, useState } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { 
-  FaAward, FaUsers, FaCogs, FaCheckCircle, 
+import {
+  FaAward, FaUsers, FaCogs, FaCheckCircle,
   FaFlask, FaMicroscope, FaTrophy, FaHandshake,
   FaHeart, FaStar, FaShieldAlt, FaRocket
 } from "react-icons/fa";
 import { ArrowRight, Target, Eye, Loader2, AlertCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet";
 
 const FontLink = () => (
   <style>{`
@@ -54,7 +55,7 @@ const AboutPage = () => {
   const [aboutData, setAboutData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -75,7 +76,7 @@ const AboutPage = () => {
         }
       });
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         setAboutData(data.data);
       } else {
@@ -115,7 +116,7 @@ const AboutPage = () => {
             <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Unable to Load Page</h2>
             <p className="text-slate-600">{error || 'About page data not available'}</p>
-            <button 
+            <button
               onClick={fetchAboutPage}
               className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all"
             >
@@ -130,28 +131,28 @@ const AboutPage = () => {
 
   // Destructure data with fallbacks
   const { about, hero, coreValues, whyChooseUs, cta, cards } = aboutData;
-  
+
   // Prepare core values array
-  const coreValuesList = coreValues?.values?.length > 0 
-    ? coreValues.values 
+  const coreValuesList = coreValues?.values?.length > 0
+    ? coreValues.values
     : [
-        { title: "Quality First", description: "We believe in delivering only the highest quality products and solutions.", icon: "FaAward" },
-        { title: "Customer Focus", description: "Customer satisfaction drives every decision we make.", icon: "FaUsers" },
-        { title: "Innovation", description: "We bring advanced scientific tools and cutting-edge solutions.", icon: "FaFlask" },
-        { title: "Reliability", description: "Trusted services and long-term partnerships you can count on.", icon: "FaCogs" }
-      ];
+      { title: "Quality First", description: "We believe in delivering only the highest quality products and solutions.", icon: "FaAward" },
+      { title: "Customer Focus", description: "Customer satisfaction drives every decision we make.", icon: "FaUsers" },
+      { title: "Innovation", description: "We bring advanced scientific tools and cutting-edge solutions.", icon: "FaFlask" },
+      { title: "Reliability", description: "Trusted services and long-term partnerships you can count on.", icon: "FaCogs" }
+    ];
 
   // Prepare why choose us points
-  const whyUsPoints = whyChooseUs?.points?.length > 0 
+  const whyUsPoints = whyChooseUs?.points?.length > 0
     ? whyChooseUs.points.map(p => p.point)
     : [
-        "Wide range of laboratory equipment",
-        "Strong nationwide service network",
-        "Experienced technical support team",
-        "High-quality and certified products",
-        "Competitive pricing",
-        "Reliable after-sales service"
-      ];
+      "Wide range of laboratory equipment",
+      "Strong nationwide service network",
+      "Experienced technical support team",
+      "High-quality and certified products",
+      "Competitive pricing",
+      "Reliable after-sales service"
+    ];
 
   // Get mission and vision from cards
   const missionCard = cards?.find(card => card.tag?.toLowerCase() === 'mission');
@@ -159,6 +160,38 @@ const AboutPage = () => {
 
   return (
     <>
+
+      <Helmet>
+
+        <title>About Us | SmartLabTech</title>
+
+        <meta
+          name="description"
+          content="Learn about SmartLabTech, a trusted provider of scientific instruments, laboratory equipment, analytical solutions, and technical support for research, healthcare, pharma, and education sectors."
+        />
+
+        <meta
+          name="keywords"
+          content="about SmartLabTech, laboratory equipment company, scientific instruments provider, research lab solutions, pharma lab equipment"
+        />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="About Us | SmartLabTech" />
+
+        <meta
+          property="og:description"
+          content="Trusted scientific equipment and laboratory solutions provider delivering innovation and reliability."
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/about" />
+
+      </Helmet>
+
       <FontLink />
       <Navbar />
 
@@ -219,7 +252,7 @@ const AboutPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.22 }}
-            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-white/80 text-center mx-auto" 
+            className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-white/80 text-center mx-auto"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             {about?.description || "Delivering high-quality laboratory equipment and scientific solutions with innovation, precision, and trust."}
@@ -346,7 +379,7 @@ const AboutPage = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {coreValuesList.map((val, i) => {
-                const IconComponent = val.icon ? getIconComponent(val.icon) : 
+                const IconComponent = val.icon ? getIconComponent(val.icon) :
                   [FaAward, FaUsers, FaFlask, FaCogs][i % 4];
                 return (
                   <Reveal key={i} delay={i * 0.1}>
@@ -430,7 +463,7 @@ const AboutPage = () => {
           </div>
         </Reveal>
       )}
-      
+
       <Footer />
     </>
   );

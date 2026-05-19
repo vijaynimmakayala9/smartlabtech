@@ -12,6 +12,7 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import fallbackImage from '../assets/fallbackimage.png';
+import { Helmet } from "react-helmet";
 
 const API_BASE = "https://smartlabtechbackend-p5h6.onrender.com";
 
@@ -135,7 +136,7 @@ const ProductCard = ({ product, viewMode, index }) => {
             <p className="text-slate-500 text-sm mb-3 line-clamp-2">{product.shortDesc}</p>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-wrap">                
+              <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
                   <span className="text-xs text-slate-500">{product.inStock ? 'Ready to Ship' : 'Made to Order'}</span>
@@ -229,7 +230,7 @@ const ProductCard = ({ product, viewMode, index }) => {
 
         {(product.price || product.discountedPrice) && (
           <div className="flex items-end justify-between">
-            
+
             <div className="flex items-center gap-1.5">
               <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
               <span className="text-[10px] text-slate-500">{product.inStock ? 'In Stock' : 'On Order'}</span>
@@ -340,6 +341,38 @@ const ProductsPage = () => {
 
   return (
     <>
+
+      <Helmet>
+
+        <title>Scientific Instruments & Laboratory Equipment | SmartLabTech</title>
+
+        <meta
+          name="description"
+          content="Browse SmartLabTech laboratory instruments, scientific equipment, analytical machines, testing systems, and research solutions for healthcare, pharma, education, and industrial laboratories."
+        />
+
+        <meta
+          name="keywords"
+          content="laboratory equipment, scientific instruments, analytical instruments, testing equipment, lab machines, research instruments"
+        />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="Scientific Instruments & Laboratory Equipment | SmartLabTech" />
+
+        <meta
+          property="og:description"
+          content="Explore premium scientific instruments and laboratory equipment solutions from SmartLabTech."
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/products" />
+
+      </Helmet>
+
       <Navbar />
       <div className="bg-blue-50 font-sans">
 
@@ -382,7 +415,7 @@ const ProductsPage = () => {
                 </p>
               </motion.div>
 
-              
+
             </div>
 
             {/* Search & Filters */}
@@ -437,8 +470,8 @@ const ProductsPage = () => {
                   <button
                     onClick={() => setViewMode("grid")}
                     className={`p-3 rounded-xl transition ${viewMode === "grid"
-                        ? "bg-blue-600 text-white shadow-md"
-                        : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
                       }`}
                   >
                     <Grid size={18} />
@@ -446,8 +479,8 @@ const ProductsPage = () => {
                   <button
                     onClick={() => setViewMode("list")}
                     className={`p-3 rounded-xl transition ${viewMode === "list"
-                        ? "bg-blue-600 text-white shadow-md"
-                        : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
                       }`}
                   >
                     <List size={18} />
@@ -586,7 +619,7 @@ const ProductsPage = () => {
           </div>
         </section>
 
-       
+
 
         {/* Back to Top */}
         <AnimatePresence>

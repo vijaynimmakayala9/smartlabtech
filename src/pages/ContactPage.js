@@ -8,6 +8,7 @@ import {
 import { ArrowRight, Send, ChevronDown, Loader2, CheckCircle2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet";
 
 /* ─── Google Fonts ─────────────────────────────────────────────────────── */
 const FontLink = () => (
@@ -238,6 +239,38 @@ const ContactPage = () => {
 
   return (
     <>
+
+      <Helmet>
+
+        <title>Contact SmartLabTech | Laboratory Equipment Support</title>
+
+        <meta
+          name="description"
+          content="Contact SmartLabTech for laboratory equipment inquiries, scientific instrument support, quotations, installation services, and technical assistance."
+        />
+
+        <meta
+          name="keywords"
+          content="contact SmartLabTech, laboratory support, scientific equipment contact, technical assistance, lab equipment quotations"
+        />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="Contact SmartLabTech | Laboratory Equipment Support" />
+
+        <meta
+          property="og:description"
+          content="Get in touch with SmartLabTech for scientific instruments and laboratory equipment solutions."
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/contact" />
+
+      </Helmet>
+
       <FontLink />
       <Navbar />
 

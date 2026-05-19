@@ -8,6 +8,7 @@ import Contact from '../components/Contact.js';
 import Footer from '../components/Footer.js';
 import Testimonials from '../components/Testinomials.js';
 import BrandMarquee from "../components/BrandsScroll.js";
+import { Helmet } from "react-helmet";
 
 export default function Home() {
   const isAnimating = useRef(false);
@@ -24,7 +25,7 @@ export default function Home() {
     requestAnimationFrame(() => {
       const start = window.scrollY;
       const change = to - start;
-      
+
       if (Math.abs(change) < 1) {
         isAnimating.current = false;
         return;
@@ -32,8 +33,8 @@ export default function Home() {
 
       // Smoother easing function
       const easeInOutCubic = (t) => {
-        return t < 0.5 
-          ? 4 * t * t * t 
+        return t < 0.5
+          ? 4 * t * t * t
           : 1 - Math.pow(-2 * t + 2, 3) / 2;
       };
 
@@ -45,7 +46,7 @@ export default function Home() {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const easedProgress = easeInOutCubic(progress);
-        
+
         window.scrollTo({
           top: start + change * easedProgress,
           behavior: 'auto' // Use 'auto' instead of 'instant' for compatibility
@@ -89,14 +90,14 @@ export default function Home() {
     const handleHashChange = (e) => {
       const hash = window.location.hash;
       if (!hash) return;
-      
+
       e?.preventDefault();
 
       const element = document.querySelector(hash);
       if (element) {
         const offset = 80;
         const pos = element.getBoundingClientRect().top + window.scrollY - offset;
-        
+
         // Small delay to ensure DOM is ready
         setTimeout(() => {
           smoothScroll(pos, 900);
@@ -119,7 +120,7 @@ export default function Home() {
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    
+
     // Handle initial hash
     if (window.location.hash) {
       handleInitialHash();
@@ -131,15 +132,48 @@ export default function Home() {
   }, [smoothScroll]);
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <Hero id="hero" />
-      <About id="about" />
-      <BrandMarquee id="brands" />
-      <Journey id="journey" />
-      <Testimonials id="testimonials" />
-      <Contact id="contact" />
-      <Footer id="footer" />
-    </div>
+    <>
+
+      <Helmet>
+
+        <title>SmartLabTech | Scientific Instruments & Laboratory Equipment Solutions</title>
+
+        <meta name="description" content="SmartLabTech provides premium laboratory instruments, scientific equipment, testing solutions, and technical support for research labs, pharma, healthcare, and educational institutions." />
+
+        <meta name="keywords" content="laboratory equipment, scientific instruments, analytical instruments, lab solutions, pharma equipment, healthcare instruments, SmartLabTech" />
+
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:title" content="SmartLabTech | Scientific Instruments & Laboratory Equipment Solutions" />
+
+        <meta property="og:description" content="Premium scientific instruments and laboratory equipment solutions for research, pharma, healthcare, and education." />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:image" content="/logo.png" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <meta name="twitter:title" content="SmartLabTech | Scientific Instruments & Laboratory Equipment Solutions" />
+
+        <meta name="twitter:description" content="Advanced laboratory equipment and scientific solutions for research and healthcare industries." />
+
+        <meta name="twitter:image" content="/logo.png" />
+
+        <link rel="canonical" href="https://smartlabtech.com/" />
+
+      </Helmet>
+
+      <div className="min-h-screen">
+        <Navbar />
+        <Hero id="hero" />
+        <About id="about" />
+        <BrandMarquee id="brands" />
+        <Journey id="journey" />
+        <Testimonials id="testimonials" />
+        <Contact id="contact" />
+        <Footer id="footer" />
+      </div>
+    </>
   );
 }

@@ -8,6 +8,7 @@ import { ArrowRight, Phone, Mail, MapPin, Clock, Shield, Loader2, AlertCircle } 
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import ServiceModal from "../modal/ServiceModal";
+import { Helmet } from "react-helmet";
 
 /* ─── Google Fonts ─────────── */
 const FontLink = () => (
@@ -53,7 +54,7 @@ const ServicesPage = () => {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
-  
+
   const [formData, setFormData] = useState({
     companyDetails: '',
     unit: '',
@@ -110,32 +111,32 @@ const ServicesPage = () => {
   const validateContactNo = (contactNo) => {
     // Remove any spaces or special characters for validation
     const cleanNumber = contactNo.replace(/[\s\-\(\)\+]/g, '');
-    
+
     if (!cleanNumber) {
       return { isValid: false, message: 'Contact number is required' };
     }
-    
+
     // Check if it contains only digits
     if (!/^\d+$/.test(cleanNumber)) {
       return { isValid: false, message: 'Contact number should contain only digits' };
     }
-    
+
     // Check length (10 digits for mobile, or 10-12 for landline with STD code)
     if (cleanNumber.length < 10 || cleanNumber.length > 12) {
       return { isValid: false, message: 'Contact number should be between 10-12 digits' };
     }
-    
+
     // Check if starts with valid Indian mobile prefixes (6-9) for 10-digit numbers
     if (cleanNumber.length === 10 && !/^[6-9]/.test(cleanNumber)) {
       return { isValid: false, message: 'Mobile number should start with 6,7,8, or 9' };
     }
-    
+
     return { isValid: true, message: '' };
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Special handling for contactNo to allow only digits
     if (name === 'contactNo') {
       const digitsOnly = value.replace(/[^\d]/g, '');
@@ -143,7 +144,7 @@ const ServicesPage = () => {
     } else {
       setFormData({ ...formData, [name]: value });
     }
-    
+
     // Clear submit message when user starts typing
     if (submitMessage.text) {
       setSubmitMessage({ type: '', text: '' });
@@ -152,17 +153,17 @@ const ServicesPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate contact number before submission
     const contactValidation = validateContactNo(formData.contactNo);
     if (!contactValidation.isValid) {
       setSubmitMessage({ type: 'error', text: contactValidation.message });
       return;
     }
-    
+
     setIsSubmitting(true);
     setSubmitMessage({ type: '', text: '' });
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/servicepage/submit', {
@@ -173,9 +174,9 @@ const ServicesPage = () => {
         },
         body: JSON.stringify(formData)
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok && data.success) {
         setSubmitMessage({ type: 'success', text: 'Service request submitted successfully! Our team will contact you shortly.' });
         // Reset form after successful submission
@@ -202,7 +203,7 @@ const ServicesPage = () => {
       setSubmitMessage({ type: 'error', text: 'Network error. Please check your connection and try again.' });
     } finally {
       setIsSubmitting(false);
-      
+
       // Auto-hide success message after 5 seconds
       setTimeout(() => {
         if (submitMessage.type === 'success') {
@@ -271,6 +272,38 @@ const ServicesPage = () => {
   if (error) {
     return (
       <>
+
+        <Helmet>
+
+          <title>Laboratory Services & Technical Support | SmartLabTech</title>
+
+          <meta
+            name="description"
+            content="Explore SmartLabTech laboratory services including installation, calibration, maintenance, validation, technical support, and equipment servicing solutions."
+          />
+
+          <meta
+            name="keywords"
+            content="laboratory services, equipment calibration, lab maintenance, technical support, scientific equipment servicing"
+          />
+
+          <meta name="robots" content="index, follow" />
+
+          <meta property="og:title" content="Laboratory Services & Technical Support | SmartLabTech" />
+
+          <meta
+            property="og:description"
+            content="Professional laboratory equipment installation, maintenance, and support services."
+          />
+
+          <meta property="og:type" content="website" />
+
+          <meta property="og:image" content="/logo.png" />
+
+          <link rel="canonical" href="https://smartlabtech.com/services" />
+
+        </Helmet>
+
         <FontLink />
         <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
@@ -520,11 +553,10 @@ const ServicesPage = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-10 border border-slate-100 shadow-lg">
               {/* Submit Message Display */}
               {submitMessage.text && (
-                <div className={`mb-6 p-4 rounded-xl ${
-                  submitMessage.type === 'success' 
-                    ? 'bg-green-50 border border-green-200 text-green-700' 
+                <div className={`mb-6 p-4 rounded-xl ${submitMessage.type === 'success'
+                    ? 'bg-green-50 border border-green-200 text-green-700'
                     : 'bg-red-50 border border-red-200 text-red-700'
-                }`}>
+                  }`}>
                   <div className="flex items-center gap-2">
                     {submitMessage.type === 'success' ? (
                       <FaCheckCircle className="text-green-500" />
