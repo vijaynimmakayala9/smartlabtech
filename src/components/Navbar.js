@@ -183,7 +183,7 @@ export default function Navbar() {
           name: product.name,
           brandName: product.brandName || product.brand?.name,
           categoryName: product.categoryName || product.category?.name,
-          image: product.mainImage,
+          image: product.image,
           brand: product.brand,
           category: product.category,
           slug: product.slug,
