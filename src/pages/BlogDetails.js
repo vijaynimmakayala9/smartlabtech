@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Calendar, Clock, Tag, User, ArrowLeft, Share2, Facebook, Twitter, Linkedin, Link2, Loader2, AlertCircle } from "lucide-react";
 import { FaFacebook, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { Helmet } from "react-helmet";
 
 
 const BlogDetailsPage = () => {
@@ -27,7 +28,7 @@ const BlogDetailsPage = () => {
             setLoading(true);
             const response = await fetch(`https://smartlabtechbackend-p5h6.onrender.com/api/blogs/slug/${slug}`);
             const data = await response.json();
-            
+
             if (data.success && data.data) {
                 setBlog(data.data);
                 fetchRelatedPosts(data.data.category);
@@ -61,8 +62,8 @@ const BlogDetailsPage = () => {
         const url = encodeURIComponent(window.location.href);
         const title = encodeURIComponent(blog?.title || '');
         let shareLink = '';
-        
-        switch(platform) {
+
+        switch (platform) {
             case 'facebook':
                 shareLink = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
                 break;
@@ -75,7 +76,7 @@ const BlogDetailsPage = () => {
             default:
                 return;
         }
-        
+
         window.open(shareLink, '_blank', 'width=600,height=400');
     };
 
@@ -124,6 +125,96 @@ const BlogDetailsPage = () => {
 
     return (
         <>
+
+            <Helmet>
+
+                <title>
+                    {blog?.seoTitle || `${blog?.title} | SmartLabTech Blog`}
+                </title>
+
+                <meta
+                    name="description"
+                    content={
+                        blog?.seoDescription ||
+                        blog?.shortDescription ||
+                        "Read the latest scientific articles and laboratory insights from SmartLabTech."
+                    }
+                />
+
+                <meta
+                    name="keywords"
+                    content={
+                        blog?.tags?.join(", ") ||
+                        "laboratory blogs, scientific articles, SmartLabTech"
+                    }
+                />
+
+                <meta
+                    name="robots"
+                    content="index, follow"
+                />
+
+                {/* Open Graph */}
+                <meta
+                    property="og:title"
+                    content={blog?.seoTitle || blog?.title}
+                />
+
+                <meta
+                    property="og:description"
+                    content={
+                        blog?.seoDescription ||
+                        blog?.shortDescription
+                    }
+                />
+
+                <meta
+                    property="og:type"
+                    content="article"
+                />
+
+                <meta
+                    property="og:url"
+                    content={window.location.href}
+                />
+
+                <meta
+                    property="og:image"
+                    content={blog?.bgImage || blog?.mainImage}
+                />
+
+                {/* Twitter */}
+                <meta
+                    name="twitter:card"
+                    content="summary_large_image"
+                />
+
+                <meta
+                    name="twitter:title"
+                    content={blog?.seoTitle || blog?.title}
+                />
+
+                <meta
+                    name="twitter:description"
+                    content={
+                        blog?.seoDescription ||
+                        blog?.shortDescription
+                    }
+                />
+
+                <meta
+                    name="twitter:image"
+                    content={blog?.bgImage || blog?.mainImage}
+                />
+
+                {/* Canonical */}
+                <link
+                    rel="canonical"
+                    href={`https://smartlabtech.com/blog/${blog?.slug}`}
+                />
+
+            </Helmet>
+
             <Navbar />
             <main className="bg-blue-50">
                 {/* Hero Section */}
@@ -279,7 +370,7 @@ const BlogDetailsPage = () => {
                     )}
                 </div>
 
-                
+
             </main>
             <Footer />
         </>
