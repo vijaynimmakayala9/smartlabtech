@@ -466,7 +466,7 @@ export default function Navbar() {
   const getActiveCatData = () => categories.find(c => c._id === activeCat);
   const getCatIcon = (name) => CATEGORY_ICONS[name] || '🧬';
   const getCatSlug = (cat) => cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-  const getProductLink = (catSlug, product) => `/product/${product.slug || product._id || product.name.toLowerCase().replace(/\s+/g, '-')}`;
+  const getProductLink = (catSlug, product) => `/product/${product._id || product._id || product.name.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
     <>
