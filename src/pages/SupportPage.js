@@ -260,6 +260,10 @@ export default function Support() {
     ? supportLifeCycle.points.map(p => p.point)
     : [];
 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  const email = supportHero?.email || "info@smartlabtech.net";
+
   return (
     <>
 
@@ -374,11 +378,21 @@ export default function Support() {
               <Phone size={15} /> {supportHero?.mobileNumber || "+91 40 23 774310"}
             </a>
             <a
-              href={`mailto:${supportHero?.email || "info@smartlabtech.net"}`}
+              href={
+                isMobile
+                  ? `mailto:${email}`
+                  : `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`
+              }
+              target={!isMobile ? "_blank" : undefined}
+              rel={!isMobile ? "noopener noreferrer" : undefined}
               className="relative overflow-hidden inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              <Mail size={14} /> {supportHero?.email || "info@smartlabtech.net"}
+              <Mail size={14} />
+
+              <span className="relative z-10">
+                {email}
+              </span>
             </a>
           </motion.div>
         </div>

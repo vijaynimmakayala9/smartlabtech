@@ -122,12 +122,7 @@ const ProductCard = ({ product, viewMode, index }) => {
                   <span className="text-xs text-slate-500 ml-1">({product.reviews || 0})</span>
                 </div>
               </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); setIsLiked(!isLiked); }}
-                className="p-2 rounded-full hover:bg-slate-100 transition"
-              >
-                <Heart size={18} className={`transition ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-400'}`} />
-              </button>
+              
             </div>
 
             <h3 className="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition">
@@ -190,12 +185,7 @@ const ProductCard = ({ product, viewMode, index }) => {
           </div>
         )}
 
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsLiked(!isLiked); }}
-          className="absolute top-3 right-3 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition shadow-md"
-        >
-          <Heart size={14} className={`transition ${isLiked ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} />
-        </button>
+        
 
         {!product.inStock && (
           <div className="absolute bottom-3 left-3 z-10 px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded-lg">
