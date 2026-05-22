@@ -109,7 +109,7 @@ export default function JourneySection({ id }) {
   return (
     <section
       id={id}
-      className="bg-blue-50 py-8 relative font-body"
+      className="bg-blue-50 py-8 relative font-body overflow-hidden"
     >
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

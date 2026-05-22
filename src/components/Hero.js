@@ -93,7 +93,7 @@ export default function Hero({ id }) {
   return (
     <section
       id={id}
-      className="relative flex items-center bg-blue-50 "
+      className="relative flex items-center bg-blue-50 overflow-hidden w-full max-w-full"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >

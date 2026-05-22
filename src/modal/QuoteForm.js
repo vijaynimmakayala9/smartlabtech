@@ -172,11 +172,62 @@ export function QuoteForm({ onClose }) {
 
   const validate = () => {
     const e = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (!form.phone.trim() || !/^\d{10}$/.test(form.phone.replace(/\s/g, ''))) e.phone = 'Valid 10-digit phone required';
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Valid email required';
-    if (!form.category) e.category = 'Please select a category';
-    if (!form.product) e.product = 'Please select a product';
+
+    // Name
+    if (!form.name.trim()) {
+      e.name = 'Name is required';
+    } else if (form.name.trim().length < 3) {
+      e.name = 'Name must be at least 3 characters';
+    }
+
+    // Phone
+    if (!form.phone.trim()) {
+      e.phone = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(form.phone.replace(/\s/g, ''))) {
+      e.phone = 'Valid 10-digit phone required';
+    }
+
+    // Email
+    if (!form.email.trim()) {
+      e.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      e.email = 'Valid email required';
+    }
+
+    // Company
+    if (!form.company.trim()) {
+      e.company = 'Company / Institute is required';
+    }
+
+    // City
+    if (!form.city.trim()) {
+      e.city = 'City is required';
+    }
+
+    // Category
+    if (!form.category) {
+      e.category = 'Please select a category';
+    }
+
+    // Product
+    if (!form.product) {
+      e.product = 'Please select a product';
+    }
+
+    // Quantity
+    if (!form.quantity) {
+      e.quantity = 'Quantity is required';
+    } else if (Number(form.quantity) < 1) {
+      e.quantity = 'Quantity must be at least 1';
+    }
+
+    // Usage
+    if (!form.usage.trim()) {
+      e.usage = 'Usage / Application is required';
+    } else if (form.usage.trim().length < 5) {
+      e.usage = 'Please enter proper usage details';
+    }
+
     return e;
   };
 
@@ -311,10 +362,10 @@ export function QuoteForm({ onClose }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                 <Field label="Company / Institute">
-                  <Input icon={Building2} placeholder="Optional" value={form.company} onChange={set('company')} />
+                  <Input icon={Building2} placeholder="Optional" value={form.company} onChange={set('company')} error={errors.company} />
                 </Field>
                 <Field label="City">
-                  <Input placeholder="Your city" value={form.city} onChange={set('city')} />
+                  <Input placeholder="Your city" value={form.city} onChange={set('city')} error={errors.city} />
                 </Field>
               </div>
 
@@ -366,10 +417,10 @@ export function QuoteForm({ onClose }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                 <Field label="Quantity">
-                  <Input type="number" min="1" placeholder="e.g. 2" value={form.quantity} onChange={set('quantity')} />
+                  <Input type="number" min="1" placeholder="e.g. 2" value={form.quantity} onChange={set('quantity')} error={errors.quantity} />
                 </Field>
                 <Field label="Usage / Application">
-                  <Input placeholder="Research / QC / Production" value={form.usage} onChange={set('usage')} />
+                  <Input placeholder="Research / QC / Production" value={form.usage} onChange={set('usage')} error={errors.usage} />
                 </Field>
               </div>
 
