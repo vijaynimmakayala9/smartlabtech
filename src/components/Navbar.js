@@ -521,11 +521,11 @@ export default function Navbar() {
                   max-w-full
                   overflow-hidden
                   ${isSearchOpen ? 'lg:flex hidden' : 'flex'}
-                  hover:bg-white/10 active:scale-95
+                  
                 `}
               >
                 {/* Logo Image */}
-                <div className="flex items-center justify-center rounded-xl p-1 sm:p-1.5 flex-shrink-0 bg-white/10 backdrop-blur-sm">
+                <div className="flex items-center justify-center rounded-xl p-1 sm:p-1.5 flex-shrink-0  backdrop-blur-sm">
                   <img
                     src="/logo.png"
                     alt="SmartLabTech"

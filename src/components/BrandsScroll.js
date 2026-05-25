@@ -32,7 +32,7 @@ export default function BrandMarquee() {
                         <div className="w-8 h-px bg-blue-600" />
                         <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-blue-600">Our Partners</span>
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-900" style={{ fontFamily: "'Playfair Display', serif" }}>Trusted Principles</h2>
+                    <h2 className="text-3xl font-bold text-slate-900" style={{ fontFamily: "'Playfair Display', serif" }}>Trusted Principals</h2>
                 </div>
                 <div className="relative overflow-hidden">
                     <motion.div

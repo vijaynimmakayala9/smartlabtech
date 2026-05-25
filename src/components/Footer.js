@@ -175,33 +175,75 @@ export default function Footer({ id }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 mb-12">
             {/* Brand Section */}
             <div className="col-span-2">
-              {/* Logo */}
-              <div className="flex items-center gap-2.5 mb-4">
-                <img
-                  src="/logo.png"
-                  alt="SmartLabTech"
-                  className="w-9 h-9 object-contain rounded-lg"
-                  onError={(e) => {
-                    e.target.style.display = "none";
+              <div className="flex items-center gap-3 mb-5 group">
 
-                    if (e.target.nextElementSibling) {
-                      e.target.nextElementSibling.style.display = "flex";
-                    }
-                  }}
-                />
-
+                {/* Logo Container */}
                 <div
-                  className="hidden w-9 h-9 items-center justify-center rounded-lg flex-shrink-0"
-                  style={{
-                    background: "linear-gradient(135deg,#1e3a8a,#0ea5e9)",
-                  }}
+                  className="
+                    relative flex items-center justify-center
+                    w-12 h-12
+                    rounded-2xl
+                    bg-white
+                    shadow-[0_8px_28px_rgba(14,165,233,0.18)]
+                    ring-1 ring-white/10
+                    overflow-hidden
+                    transition-all duration-300
+                    group-hover:scale-105
+                    flex-shrink-0
+                  "
                 >
-                  <FlaskConical size={18} color="#fff" />
+                  <img
+                    src="/logo.png"
+                    alt="SmartLabTech"
+                    className="w-16 h-12 object-contain"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+
+                      if (e.target.nextElementSibling) {
+                        e.target.nextElementSibling.style.display = "flex";
+                      }
+                    }}
+                  />
+
+                  {/* Fallback Icon */}
+                  <div
+                    className="hidden absolute inset-0 items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg,#1e3a8a,#0ea5e9)",
+                    }}
+                  >
+                    <FlaskConical size={20} color="#fff" />
+                  </div>
                 </div>
 
-                <span className="font-display text-lg font-bold text-white">
-                  SmartLab<span className="text-sky-400">Tech</span>
-                </span>
+                {/* Brand Text */}
+                <div className="flex flex-col leading-none">
+                  <span
+                    className="
+        text-[24px]
+        font-black
+        tracking-[-0.03em]
+        text-white
+        leading-none
+      "
+                  >
+                    SmartLab
+                    <span className="text-sky-400">Tech</span>
+                  </span>
+
+                  <span
+                    className="
+        text-[10px]
+        uppercase
+        tracking-[0.22em]
+        text-slate-400
+        font-semibold
+        mt-1.5
+      "
+                  >
+                    Scientific Solutions
+                  </span>
+                </div>
               </div>
 
               {/* Company Description */}
