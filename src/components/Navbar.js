@@ -311,7 +311,7 @@ export default function Navbar() {
       const inNavbar = e.target.closest('[data-navbar]');
       const inDropdown = dropZoneRef.current?.contains(e.target);
       const inSearchDropdown = searchDropdownRef.current?.contains(e.target);
-      
+
       if (!inNavbar && !inDropdown && !inSearchDropdown) {
         setDropOpen(false);
         setMoreDropOpen(false);
@@ -320,7 +320,7 @@ export default function Navbar() {
 
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside); // Add touch event for mobile
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
@@ -494,12 +494,12 @@ export default function Navbar() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className={`fixed top-0 left-0 right-0 z-[1000]
-      px-4 sm:px-10 lg:px-20
-      h-[64px] sm:h-[72px] lg:h-[80px]
-      transition-all duration-300
-      ${scrolled
-                ? "bg-gradient-to-r from-blue-900 to-sky-500 border-b border-slate-200 shadow-[0_4px_24px_rgba(15,35,86,0.10)]"
-                : "bg-gradient-to-r from-blue-900 to-sky-500 border-b border-slate-200/50"
+            px-4 sm:px-10 lg:px-20
+            h-[64px] sm:h-[72px] lg:h-[80px]
+            transition-all duration-300
+            ${scrolled
+                ? "bg-gradient-to-r from-sky-500 to-blue-900 border-b border-slate-200 shadow-[0_4px_24px_rgba(15,35,86,0.10)]"
+                : "bg-gradient-to-r from-sky-500 to-blue-900 border-b border-slate-200/50"
               } backdrop-blur-xl`}
           >
             <div className="h-full flex items-center justify-between">
@@ -511,39 +511,47 @@ export default function Navbar() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className={`
-                flex items-center gap-2 sm:gap-3
-                flex-shrink-0
-                rounded-2xl
-                bg-white
-                shadow-[0_4px_20px_rgba(15,35,86,0.08)]
-                hover:shadow-[0_8px_30px_rgba(15,35,86,0.14)]
-                transition-all duration-300
-                border border-white/60
-                px-2.5 sm:px-3.5
-                py-1.5 sm:py-2
-                min-h-[52px] sm:min-h-[58px]
-                max-w-full
-                overflow-hidden
-                ${isSearchOpen ? 'lg:flex hidden' : 'flex'}
-              `}
+                  flex items-center gap-2 sm:gap-3
+                  flex-shrink-0
+                  rounded-2xl
+                  transition-all duration-300
+                  px-2.5 sm:px-3.5
+                  py-1.5 sm:py-2
+                  min-h-[52px] sm:min-h-[58px]
+                  max-w-full
+                  overflow-hidden
+                  ${isSearchOpen ? 'lg:flex hidden' : 'flex'}
+                  hover:bg-white/10 active:scale-95
+                `}
               >
                 {/* Logo Image */}
-                <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-blue-50 p-1 sm:p-1.5 flex-shrink-0">
+                <div className="flex items-center justify-center rounded-xl p-1 sm:p-1.5 flex-shrink-0 bg-white/10 backdrop-blur-sm">
                   <img
                     src="/logo.png"
                     alt="SmartLabTech"
                     className="h-8 sm:h-10 lg:h-11 w-auto object-contain block"
                     onError={(e) => {
                       e.target.style.display = 'none';
+                      // Show fallback text if image fails to load
+                      const parent = e.target.parentElement;
+                      if (parent && !parent.querySelector('.fallback-text')) {
+                        const fallback = document.createElement('span');
+                        fallback.className = 'fallback-text text-white font-bold text-lg';
+                        fallback.innerText = 'SLT';
+                        parent.appendChild(fallback);
+                      }
                     }}
                   />
                 </div>
 
                 {/* Text */}
                 <div className="flex flex-col justify-center min-w-0 text-left">
-                  <span className="text-sm sm:text-lg lg:text-[20px] font-bold leading-none tracking-tight text-blue-950 whitespace-nowrap">
-                    SmartLab
-                    <span className="text-sky-500">Tech</span>
+                  <span className="text-sm sm:text-lg lg:text-[20px] font-bold leading-none tracking-tight whitespace-nowrap">
+                    <span className="text-white">SmartLab</span>
+                    <span className="text-blue-900">Tech</span>
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] lg:text-[10px] text-white/70 font-medium tracking-wider hidden sm:block">
+                    Scientific Solutions
                   </span>
                 </div>
               </button>

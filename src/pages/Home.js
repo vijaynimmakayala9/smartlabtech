@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 import Navbar from '../components/Navbar.js';
 import Hero from '../components/Hero.js';
@@ -9,10 +9,22 @@ import Footer from '../components/Footer.js';
 import Testimonials from '../components/Testinomials.js';
 import BrandMarquee from "../components/BrandsScroll.js";
 import { Helmet } from "react-helmet";
+import ServiceModal from "../modal/ServiceModal";
+
 
 export default function Home() {
   const isAnimating = useRef(false);
   const rafRef = useRef(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsModalOpen(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const smoothScroll = useCallback((to, duration = 900) => {
     // Cancel any in-progress animation
@@ -173,6 +185,11 @@ export default function Home() {
         <Testimonials id="testimonials" />
         <Contact id="contact" />
         <Footer id="footer" />
+
+        <ServiceModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </>
   );

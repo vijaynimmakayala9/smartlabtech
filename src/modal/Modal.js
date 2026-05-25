@@ -1,8 +1,10 @@
+// src/modal/Modal.js
+import { Fragment, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
 
-export function Modal({ open, onClose, children }) {
-  // Prevent body scroll when modal is open
+export function Modal({ open, onClose, children, position = 'center' }) {
+  // Lock body scroll when modal is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -14,37 +16,80 @@ export function Modal({ open, onClose, children }) {
     };
   }, [open]);
 
-  return (
-    <AnimatePresence>
+  // Handle escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && open) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
+
+  const modalVariants = {
+    center: {
+      hidden: { opacity: 0, scale: 0.95 },
+      visible: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.95 }
+    },
+    right: {
+      hidden: { x: '100%' },
+      visible: { x: 0 },
+      exit: { x: '100%' }
+    }
+  };
+
+  const modalStyle = position === 'right'
+    ? "fixed top-0 right-0 h-full w-full max-w-2xl bg-white shadow-xl overflow-hidden"
+    : "w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden";
+
+  const containerStyle = position === 'right'
+    ? "flex justify-end"
+    : "flex items-center justify-center p-4";
+
+  return createPortal(
+    <AnimatePresence mode="wait">
       {open && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-3 sm:p-4 md:p-5">
+        <Fragment>
           {/* Backdrop */}
           <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={backdropVariants}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#0f2356]/55 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1550]"
           />
 
-          {/* Modal panel – with fixed height constraints */}
-          <motion.div
-            key="modal"
-            initial={{ opacity: 0, scale: 0.92, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 30 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            onClick={e => e.stopPropagation()}
-            className="relative w-full max-w-[560px] h-auto max-h-[85vh] min-h-[300px] bg-white rounded-xl sm:rounded-2xl overflow-hidden flex flex-col z-[2001] shadow-[0_40px_100px_rgba(15,35,86,0.3),0_8px_32px_rgba(15,35,86,0.15)] border border-blue-900/10"
+          {/* Modal Container */}
+          <div
+            className={`fixed inset-0 z-[1550] ${containerStyle}`}
+            onClick={onClose}
           >
-            {/* Decorative top border */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-900 to-sky-500 z-10" />
-            {children}
-          </motion.div>
-        </div>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={modalVariants[position]}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className={modalStyle}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {children}
+            </motion.div>
+          </div>
+        </Fragment>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

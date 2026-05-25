@@ -207,8 +207,8 @@ export default function Hero({ id }) {
               </motion.h1>
             </AnimatePresence>
 
-            <AnimatePresence mode="wait">
-              <motion.p
+            <div>
+              <p
                 key={`sub-${current}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -217,8 +217,8 @@ export default function Hero({ id }) {
                 className="text-slate-500 max-w-xs sm:max-w-sm md:max-w-md mb-6 sm:mb-7 text-sm sm:text-base leading-relaxed"
               >
                 You&apos;ve come to the right place!
-              </motion.p>
-            </AnimatePresence>
+              </p>
+            </div>
 
             <div className="flex flex-col xs:flex-row flex-wrap gap-3 w-full sm:w-auto">
               <button

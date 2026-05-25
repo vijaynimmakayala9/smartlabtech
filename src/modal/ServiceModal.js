@@ -29,15 +29,15 @@ export default function ServiceModal({ isOpen, onClose }) {
 
       console.log("Popup API:", response.data);
 
-      if (
-        response.data.success &&
-        response.data.data?.isActive
-      ) {
+      if (response.data?.data?.isActive === true) {
         setPopupData(response.data.data);
 
-        // Open Popup After Delay
         setTimeout(() => {
           setShowModal(true);
+
+          if (onClose) {
+            // optional if needed
+          }
         }, 1000);
       }
     } catch (error) {
@@ -67,9 +67,8 @@ export default function ServiceModal({ isOpen, onClose }) {
 
       <AnimatePresence>
         {!loading &&
-          showModal &&
-          popupData &&
-          popupData.isActive && (
+          popupData?.isActive === true &&
+          showModal && (
             <>
               {/* Backdrop */}
               <motion.div
