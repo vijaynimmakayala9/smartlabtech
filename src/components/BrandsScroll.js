@@ -46,7 +46,7 @@ export default function BrandMarquee() {
                                 href={brand.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-shrink-0 w-36 h-24 mx-6 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center p-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                                className="flex-shrink-0 w-36 h-24 mx-6 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                             >
                                 <img
                                     src={brand.logo?.replace('localhost:5000', 'smartlabtechbackend-p5h6.onrender.com')}
