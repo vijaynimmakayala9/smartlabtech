@@ -123,6 +123,7 @@ export default function Hero({ id }) {
                   key={current}
                   src={slide.image}
                   alt={slide.title}
+                  title={slide.title}
                   initial={{ scale: 1.06, opacity: 0, x: direction > 0 ? 30 : -30 }}
                   animate={{ scale: 1, opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: direction > 0 ? -30 : 30 }}

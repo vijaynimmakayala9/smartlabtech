@@ -255,7 +255,7 @@ export function QueryForm({ onClose }) {
               </Field>
 
               {/* Subject from API */}
-              <Field label="Subject">
+              <Field label="Subject *">
                 <div className="relative">
                   {subjectsLoading ? (
                     <div className="w-full bg-slate-50 border-2 border-slate-200 rounded-lg sm:rounded-xl py-2.5 sm:py-[11px] px-3 sm:px-[14px] text-sm text-slate-400 flex items-center gap-2">
@@ -269,7 +269,7 @@ export function QueryForm({ onClose }) {
                         onChange={set('subject')}
                         className="w-full bg-slate-50 border-2 border-slate-200 rounded-lg sm:rounded-xl py-2.5 sm:py-[11px] px-3 sm:px-[14px] text-sm text-slate-800 outline-none font-sans transition-all duration-200 focus:border-sky-600 focus:shadow-[0_0_0_3px_rgba(2,132,199,0.1)] focus:bg-white appearance-none pr-9 cursor-pointer"
                       >
-                        <option value="">Select subject (optional)</option>
+                        <option value="">Select subject</option>
                         {subjects.map((s) => (
                           <option key={s._id} value={s._id}>{s.name}</option>
                         ))}

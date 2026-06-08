@@ -361,11 +361,11 @@ export function QuoteForm({ onClose }) {
               </Field>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                <Field label="Company / Institute">
+                <Field label="Company / Institute *">
                   <Input icon={Building2} placeholder="Optional" value={form.company} onChange={set('company')} error={errors.company} />
                 </Field>
-                <Field label="City">
-                  <Input placeholder="Your city" value={form.city} onChange={set('city')} error={errors.city} />
+                <Field label="City *">
+                  <Input placeholder="Your city " value={form.city} onChange={set('city')} error={errors.city} />
                 </Field>
               </div>
 
@@ -416,10 +416,10 @@ export function QuoteForm({ onClose }) {
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                <Field label="Quantity">
+                <Field label="Quantity *">
                   <Input type="number" min="1" placeholder="e.g. 2" value={form.quantity} onChange={set('quantity')} error={errors.quantity} />
                 </Field>
-                <Field label="Usage / Application">
+                <Field label="Usage / Application *">
                   <Input placeholder="Research / QC / Production" value={form.usage} onChange={set('usage')} error={errors.usage} />
                 </Field>
               </div>

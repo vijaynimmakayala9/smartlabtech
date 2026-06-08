@@ -111,6 +111,7 @@ const ServiceRequestModal = ({ onClose }) => {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [done, setDone] = useState(false);
+  const [touched, setTouched] = useState({});
 
   const emptyForm = {
     companyDetails: '',
@@ -137,6 +138,7 @@ const ServiceRequestModal = ({ onClose }) => {
       setDone(false);
       setFormData(emptyForm);
       setErrors({});
+      setTouched({});
     };
   }, []);
 
@@ -167,23 +169,50 @@ const ServiceRequestModal = ({ onClose }) => {
     return { isValid: true, message: '' };
   };
 
+  // Comprehensive validation for all fields
   const validate = () => {
     const newErrors = {};
 
+    // Company Details - Required
     if (!formData.companyDetails.trim()) {
       newErrors.companyDetails = 'Company details are required';
+    } else if (formData.companyDetails.trim().length < 2) {
+      newErrors.companyDetails = 'Company details must be at least 2 characters';
+    } else if (formData.companyDetails.trim().length > 100) {
+      newErrors.companyDetails = 'Company details must be less than 100 characters';
     }
 
+    // Unit - Optional but validate if provided
+    if (formData.unit && formData.unit.trim().length > 100) {
+      newErrors.unit = 'Unit name must be less than 100 characters';
+    }
+
+    // Location - Required
     if (!formData.location.trim()) {
       newErrors.location = 'Location is required';
+    } else if (formData.location.trim().length < 2) {
+      newErrors.location = 'Location must be at least 2 characters';
+    } else if (formData.location.trim().length > 100) {
+      newErrors.location = 'Location must be less than 100 characters';
     }
 
+    // Contact Person - Required
     if (!formData.contactPerson.trim()) {
       newErrors.contactPerson = 'Contact person name is required';
     } else if (formData.contactPerson.trim().length < 2) {
       newErrors.contactPerson = 'Name must be at least 2 characters';
+    } else if (formData.contactPerson.trim().length > 50) {
+      newErrors.contactPerson = 'Name must be less than 50 characters';
+    } else if (!/^[a-zA-Z\s\-\.]+$/.test(formData.contactPerson.trim())) {
+      newErrors.contactPerson = 'Name should contain only letters, spaces, hyphens, and dots';
     }
 
+    // Designation - Optional but validate if provided
+    if (formData.designation && formData.designation.trim().length > 50) {
+      newErrors.designation = 'Designation must be less than 50 characters';
+    }
+
+    // Contact Number - Required
     if (!formData.contactNo) {
       newErrors.contactNo = 'Contact number is required';
     } else {
@@ -193,43 +222,183 @@ const ServiceRequestModal = ({ onClose }) => {
       }
     }
 
+    // Email - Required
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Valid email is required';
+    } else if (formData.email.length > 100) {
+      newErrors.email = 'Email must be less than 100 characters';
     }
 
+    // Instrument Type - Required
+    if (!formData.instrumentType.trim()) {
+      newErrors.instrumentType = 'Instrument type is required';
+    } else if (formData.instrumentType.trim().length < 2) {
+      newErrors.instrumentType = 'Instrument type must be at least 2 characters';
+    } else if (formData.instrumentType.trim().length > 100) {
+      newErrors.instrumentType = 'Instrument type must be less than 100 characters';
+    }
+
+    // Model Number - Optional but validate if provided
+    if (formData.modelNo && formData.modelNo.trim().length > 50) {
+      newErrors.modelNo = 'Model number must be less than 50 characters';
+    }
+
+    // Serial Number - Optional but validate if provided
+    if (formData.serialNo && formData.serialNo.trim().length > 50) {
+      newErrors.serialNo = 'Serial number must be less than 50 characters';
+    }
+
+    // Nature of Problem - Required
     if (!formData.natureOfProblem.trim()) {
       newErrors.natureOfProblem = 'Please describe the problem';
     } else if (formData.natureOfProblem.trim().length < 10) {
-      newErrors.natureOfProblem = 'Please provide more details about the issue';
+      newErrors.natureOfProblem = 'Please provide at least 10 characters describing the issue';
+    } else if (formData.natureOfProblem.trim().length > 1000) {
+      newErrors.natureOfProblem = 'Problem description must be less than 1000 characters';
+    }
+
+    // Contract Type - Required
+    if (!formData.contractType.trim()) {
+      newErrors.contractType = 'Contract type is required';
+    } else if (!['AMC', 'Non-AMC', 'Warranty', 'Out of Warranty'].includes(formData.contractType.trim())) {
+      newErrors.contractType = 'Contract type must be AMC, Non-AMC, Warranty, or Out of Warranty';
+    }
+
+    // PO Number - Optional but validate if provided
+    if (formData.poNumber && formData.poNumber.trim().length > 50) {
+      newErrors.poNumber = 'PO number must be less than 50 characters';
     }
 
     return newErrors;
   };
 
+  // Real-time validation for individual field
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'companyDetails':
+        if (!value.trim()) return 'Company details are required';
+        if (value.trim().length < 2) return 'Company details must be at least 2 characters';
+        if (value.trim().length > 100) return 'Company details must be less than 100 characters';
+        return '';
+
+      case 'unit':
+        if (value && value.trim().length > 100) return 'Unit name must be less than 100 characters';
+        return '';
+
+      case 'location':
+        if (!value.trim()) return 'Location is required';
+        if (value.trim().length < 2) return 'Location must be at least 2 characters';
+        if (value.trim().length > 100) return 'Location must be less than 100 characters';
+        return '';
+
+      case 'contactPerson':
+        if (!value.trim()) return 'Contact person name is required';
+        if (value.trim().length < 2) return 'Name must be at least 2 characters';
+        if (value.trim().length > 50) return 'Name must be less than 50 characters';
+        if (!/^[a-zA-Z\s\-\.]+$/.test(value.trim())) return 'Name should contain only letters, spaces, hyphens, and dots';
+        return '';
+
+      case 'designation':
+        if (value && value.trim().length > 50) return 'Designation must be less than 50 characters';
+        return '';
+
+      case 'contactNo':
+        if (!value) return 'Contact number is required';
+        const validation = validateContactNo(value);
+        return validation.isValid ? '' : validation.message;
+
+      case 'email':
+        if (!value.trim()) return 'Email is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Valid email is required';
+        if (value.length > 100) return 'Email must be less than 100 characters';
+        return '';
+
+      case 'instrumentType':
+        if (!value.trim()) return 'Instrument type is required';
+        if (value.trim().length < 2) return 'Instrument type must be at least 2 characters';
+        if (value.trim().length > 100) return 'Instrument type must be less than 100 characters';
+        return '';
+
+      case 'modelNo':
+        if (value && value.trim().length > 50) return 'Model number must be less than 50 characters';
+        return '';
+
+      case 'serialNo':
+        if (value && value.trim().length > 50) return 'Serial number must be less than 50 characters';
+        return '';
+
+      case 'natureOfProblem':
+        if (!value.trim()) return 'Please describe the problem';
+        if (value.trim().length < 10) return 'Please provide at least 10 characters describing the issue';
+        if (value.trim().length > 1000) return 'Problem description must be less than 1000 characters';
+        return '';
+
+      case 'contractType':
+        if (!value.trim()) return 'Contract type is required';
+        if (!['AMC', 'Non-AMC', 'Warranty', 'Out of Warranty'].includes(value.trim())) {
+          return 'Contract type must be AMC, Non-AMC, Warranty, or Out of Warranty';
+        }
+        return '';
+
+      case 'poNumber':
+        if (value && value.trim().length > 50) return 'PO number must be less than 50 characters';
+        return '';
+
+      default:
+        return '';
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    let processedValue = value;
     if (name === 'contactNo') {
-      const digitsOnly = value.replace(/[^\d]/g, '');
-      setFormData({ ...formData, [name]: digitsOnly.slice(0, 12) });
-    } else {
-      setFormData({ ...formData, [name]: value });
+      processedValue = value.replace(/[^\d]/g, '').slice(0, 12);
+    } else if (name === 'contractType') {
+      // For contract type, we don't modify the value
+      processedValue = value;
     }
 
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+    setFormData({ ...formData, [name]: processedValue });
+
+    // Real-time validation for touched fields
+    if (touched[name]) {
+      const fieldError = validateField(name, processedValue);
+      setErrors(prev => ({ ...prev, [name]: fieldError }));
     }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    const fieldError = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Mark all fields as touched
+    const allTouched = {};
+    Object.keys(formData).forEach(key => {
+      allTouched[key] = true;
+    });
+    setTouched(allTouched);
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      // Scroll to first error
+      const firstErrorField = Object.keys(validationErrors)[0];
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.focus();
+      }
+      showToast('Please fix all validation errors', 'error');
       return;
     }
 
@@ -257,6 +426,8 @@ const ServiceRequestModal = ({ onClose }) => {
           onClose();
           setDone(false);
           setFormData(emptyForm);
+          setErrors({});
+          setTouched({});
         }, 3000);
       } else {
         showToast(data.message || 'Failed to submit service request', 'error');
@@ -273,10 +444,13 @@ const ServiceRequestModal = ({ onClose }) => {
     setDone(false);
     setFormData(emptyForm);
     setErrors({});
+    setTouched({});
   };
 
   const inputClass = "w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200";
   const textareaClass = "w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none";
+  const errorInputClass = "border-red-500 focus:border-red-500 focus:ring-red-100";
+  const errorTextClass = "text-xs text-red-500 mt-1";
 
   return (
     <>
@@ -332,10 +506,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="companyDetails"
                       value={formData.companyDetails}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.companyDetails ? errorInputClass : ''}`}
                       placeholder="Enter company name"
                     />
-                    {errors.companyDetails && <p className="text-xs text-red-500 mt-1">{errors.companyDetails}</p>}
+                    {errors.companyDetails && <p className={errorTextClass}>{errors.companyDetails}</p>}
                   </div>
 
                   <div>
@@ -345,9 +520,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="unit"
                       value={formData.unit}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.unit ? errorInputClass : ''}`}
                       placeholder="Optional"
                     />
+                    {errors.unit && <p className={errorTextClass}>{errors.unit}</p>}
                   </div>
                 </div>
 
@@ -359,10 +536,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.location ? errorInputClass : ''}`}
                       placeholder="City, State"
                     />
-                    {errors.location && <p className="text-xs text-red-500 mt-1">{errors.location}</p>}
+                    {errors.location && <p className={errorTextClass}>{errors.location}</p>}
                   </div>
 
                   <div>
@@ -372,10 +550,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="contactPerson"
                       value={formData.contactPerson}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.contactPerson ? errorInputClass : ''}`}
                       placeholder="Full name"
                     />
-                    {errors.contactPerson && <p className="text-xs text-red-500 mt-1">{errors.contactPerson}</p>}
+                    {errors.contactPerson && <p className={errorTextClass}>{errors.contactPerson}</p>}
                   </div>
                 </div>
 
@@ -387,9 +566,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="designation"
                       value={formData.designation}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.designation ? errorInputClass : ''}`}
                       placeholder="Optional"
                     />
+                    {errors.designation && <p className={errorTextClass}>{errors.designation}</p>}
                   </div>
 
                   <div>
@@ -399,10 +580,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="contactNo"
                       value={formData.contactNo}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.contactNo ? errorInputClass : ''}`}
                       placeholder="10-12 digits"
                     />
-                    {errors.contactNo && <p className="text-xs text-red-500 mt-1">{errors.contactNo}</p>}
+                    {errors.contactNo && <p className={errorTextClass}>{errors.contactNo}</p>}
                   </div>
                 </div>
 
@@ -414,22 +596,25 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.email ? errorInputClass : ''}`}
                       placeholder="your@email.com"
                     />
-                    {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                    {errors.email && <p className={errorTextClass}>{errors.email}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Instrument Type</label>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Instrument Type *</label>
                     <input
                       type="text"
                       name="instrumentType"
                       value={formData.instrumentType}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.instrumentType ? errorInputClass : ''}`}
                       placeholder="e.g., HPLC, Spectrophotometer"
                     />
+                    {errors.instrumentType && <p className={errorTextClass}>{errors.instrumentType}</p>}
                   </div>
                 </div>
 
@@ -441,9 +626,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="modelNo"
                       value={formData.modelNo}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.modelNo ? errorInputClass : ''}`}
                       placeholder="Optional"
                     />
+                    {errors.modelNo && <p className={errorTextClass}>{errors.modelNo}</p>}
                   </div>
 
                   <div>
@@ -453,23 +640,31 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="serialNo"
                       value={formData.serialNo}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.serialNo ? errorInputClass : ''}`}
                       placeholder="Optional"
                     />
+                    {errors.serialNo && <p className={errorTextClass}>{errors.serialNo}</p>}
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Contract Type</label>
-                    <input
-                      type="text"
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Contract Type *</label>
+                    <select
                       name="contractType"
                       value={formData.contractType}
                       onChange={handleChange}
-                      className={inputClass}
-                      placeholder="AMC / Non-AMC"
-                    />
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.contractType ? errorInputClass : ''}`}
+                    >
+                      <option value="">Select contract type</option>
+                      <option value="AMC">AMC</option>
+                      <option value="Non-AMC">Non-AMC</option>
+                      <option value="Warranty">Warranty</option>
+                      <option value="Out of Warranty">Out of Warranty</option>
+                    </select>
+                    {errors.contractType && <p className={errorTextClass}>{errors.contractType}</p>}
                   </div>
 
                   <div>
@@ -479,9 +674,11 @@ const ServiceRequestModal = ({ onClose }) => {
                       name="poNumber"
                       value={formData.poNumber}
                       onChange={handleChange}
-                      className={inputClass}
+                      onBlur={handleBlur}
+                      className={`${inputClass} ${errors.poNumber ? errorInputClass : ''}`}
                       placeholder="If applicable"
                     />
+                    {errors.poNumber && <p className={errorTextClass}>{errors.poNumber}</p>}
                   </div>
                 </div>
 
@@ -492,10 +689,11 @@ const ServiceRequestModal = ({ onClose }) => {
                     rows="4"
                     value={formData.natureOfProblem}
                     onChange={handleChange}
-                    className={textareaClass}
+                    onBlur={handleBlur}
+                    className={`${textareaClass} ${errors.natureOfProblem ? errorInputClass : ''}`}
                     placeholder="Please describe the issue in detail..."
                   />
-                  {errors.natureOfProblem && <p className="text-xs text-red-500 mt-1">{errors.natureOfProblem}</p>}
+                  {errors.natureOfProblem && <p className={errorTextClass}>{errors.natureOfProblem}</p>}
                 </div>
 
                 <button
