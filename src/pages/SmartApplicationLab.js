@@ -1,5 +1,5 @@
 // src/components/SmartApplicationLab.js
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import {
     FlaskConical,
@@ -20,11 +20,13 @@ import {
     Target,
     Layers,
     TrendingUp,
-    Mail
+    Mail,
+    Loader
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet';
+import axios from 'axios';
 
 const FontLink = () => (
     <style>{`
@@ -32,7 +34,7 @@ const FontLink = () => (
   `}</style>
 );
 
-// Animation wrapper component (reused from Support.js)
+// Animation wrapper component
 function Reveal({ children, delay = 0, className = '' }) {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, margin: '-60px' });
@@ -51,19 +53,35 @@ function Reveal({ children, delay = 0, className = '' }) {
 
 // Service Item Component for the lab offerings
 function LabServiceItem({ icon: Icon, title, description, index }) {
+    const [isHovered, setIsHovered] = useState(false);
+    
+    // Map icon string to actual Lucide component
+    const getIconComponent = (iconName) => {
+        const icons = {
+            BookOpen, Video, Users, Wrench, FileText, HelpCircle, 
+            Beaker, Target, Layers, Zap, FlaskConical, Microscope,
+            Calendar, Settings, CheckCircle, Atom, TrendingUp
+        };
+        return icons[iconName] || BookOpen;
+    };
+    
+    const IconComponent = typeof Icon === 'string' ? getIconComponent(Icon) : Icon;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.05 }}
             viewport={{ once: true }}
-            className="flex gap-4 p-4 rounded-xl bg-white/50 backdrop-blur-sm border border-blue-100 hover:shadow-md hover:border-blue-200 transition-all group"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="flex gap-4 p-4 rounded-xl bg-white/50 backdrop-blur-sm border border-blue-100 hover:shadow-md hover:border-blue-200 transition-all group cursor-pointer"
         >
-            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center group-hover:from-blue-600 group-hover:to-sky-600 transition-colors">
-                <Icon size={18} className="text-blue-700 group-hover:text-white transition-colors" />
+            <div className={`flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center transition-colors ${isHovered ? 'from-blue-600 to-sky-600' : ''}`}>
+                <IconComponent size={18} className={`transition-colors ${isHovered ? 'text-white' : 'text-blue-700'}`} />
             </div>
             <div>
-                <h4 className="font-bold text-slate-800 text-md mb-1 group-hover:text-blue-700 transition-colors" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                <h4 className={`font-bold text-slate-800 text-md mb-1 transition-colors ${isHovered ? 'text-blue-700' : ''}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
                     {title}
                 </h4>
                 <p className="text-sm text-slate-500 leading-relaxed">{description}</p>
@@ -72,19 +90,26 @@ function LabServiceItem({ icon: Icon, title, description, index }) {
     );
 }
 
-// Feature Pill Component
-function FeaturePill({ children, index }) {
+// Main Card Component
+function MainCard({ title, description, index }) {
     return (
-        <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: index * 0.03 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true }}
-            className="px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm text-blue-700 text-sm font-medium border border-blue-200 shadow-sm hover:shadow-md transition-all"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 hover:shadow-md hover:border-blue-200 transition-all group"
         >
-            {children}
-        </motion.span>
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-sky-500 rounded-full group-hover:h-10 transition-all" />
+                <h3 className="text-xl font-bold text-slate-800 group-hover:text-blue-700 transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {title}
+                </h3>
+            </div>
+            <div className="text-slate-600 leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                {description}
+            </div>
+        </motion.div>
     );
 }
 
@@ -92,71 +117,79 @@ export default function SmartApplicationLab() {
     const heroRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
     const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+    
+    const [pageData, setPageData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Data based on the provided URL content
-    const labData = {
-        hero: {
-            title: "Application Support: Smart Lab!",
-            tagline: "Step into our Lab!",
-            description: "Newly expanded and redesigned, staffed with a team of leading experts SMART APPLICATION LAB is the place where we make ideas happen.",
-            image: "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=1600" // Modern lab image
-        },
-        mainDescription: `SMART APPLICATION LAB is built upon long-term field experience and exhibits a number of typical industrial applications of different markets. Smart Application Lab can help, educate and collaborate with our customers all over India. As part of SMARTLAB's professional customer support we offer our customers the individual advice required to find the optimum solution for their sample preparation task. To achieve this, our application laboratory process, measure samples and provide a recommendation for the most suitable method and instrument. We perform sample tests, demonstrate equipment and provide applications support to customers.`,
-        facilityDescription: `These advanced, state-of-the-art facility and expert staffed entities will showcase how smartlab products and services work together for successful expansion with on-time projects. In addition, our technical staff will introduce new applications, which can potentially introduce you to new potential and expanding technology market segments.`,
-        offerings: [
-            { icon: BookOpen, title: "e-Learning", description: "Online resources and training modules for self-paced learning" },
-            { icon: Target, title: "e-Focus", description: "Targeted technical sessions for specific applications" },
-            { icon: Beaker, title: "Sample Analysis", description: "Professional testing and analysis of your samples" },
-            { icon: Video, title: "Demonstration", description: "Live equipment demonstrations and virtual tours" },
-            { icon: Users, title: "Technical Presentations", description: "In-depth presentations by expert staff" },
-            { icon: Layers, title: "Features of the Products", description: "Detailed exploration of instrument capabilities" },
-            { icon: Wrench, title: "Method Analysis", description: "Optimization of analytical methods for your needs" },
-            { icon: HelpCircle, title: "Trouble shooting solutions", description: "Expert diagnosis and problem resolution" },
-            { icon: FileText, title: "Application Library", description: "Comprehensive database of applications and methods" }
-        ],
-        features: [
-            "Training sessions", "Demonstrations", "Customization exercises",
-            "Interactive sessions", "Presentations", "Sample preparation"
-        ],
-        cta: {
-            title: "Need help with analytical challenges or equipment selection?",
-            buttonText: "Contact us for technical assistance!",
-            email: "info@smartlabtech.net"
-        }
-    };
+    // Fetch data from API
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get('https://smartlabtechbackend-p5h6.onrender.com/api/applicationpage/all');
+                if (response.data.success) {
+                    setPageData(response.data.data);
+                } else {
+                    setError('Failed to load data');
+                }
+            } catch (err) {
+                console.error('Error fetching application page data:', err);
+                setError('Unable to load application lab data. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchData();
+    }, []);
+
+    // Loading state
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader size={48} className="animate-spin text-blue-600 mx-auto mb-4" />
+                        <p className="text-slate-600" style={{ fontFamily: "'Outfit', sans-serif" }}>Loading application lab data...</p>
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    // Error state with fallback content
+    const fallbackData = {};
+
+    const data = pageData || fallbackData;
+    const heroData = data.hero || fallbackData.hero;
+    const mainCards = data.mainCards || fallbackData.mainCards;
+    const services = data.services || fallbackData.services;
+    const ctaData = data.cta || fallbackData.cta;
 
     return (
         <>
-
             <Helmet>
-
                 <title>Application Laboratory Solutions | SmartLabTech</title>
-
                 <meta
                     name="description"
                     content="Discover SmartLabTech application laboratory solutions for research, testing, analysis, quality control, healthcare, pharma, and industrial applications."
                 />
-
                 <meta
                     name="keywords"
                     content="application laboratory, lab testing solutions, research applications, pharma laboratory, analytical solutions"
                 />
-
                 <meta name="robots" content="index, follow" />
-
                 <meta property="og:title" content="Application Laboratory Solutions | SmartLabTech" />
-
                 <meta
                     property="og:description"
                     content="Advanced laboratory application solutions for scientific research, analysis, and industrial testing."
                 />
-
                 <meta property="og:type" content="website" />
-
                 <meta property="og:image" content="/logo.png" />
-
                 <link rel="canonical" href="https://smartlabtech.com/application-lab" />
-
             </Helmet>
 
             <Navbar />
@@ -167,16 +200,19 @@ export default function SmartApplicationLab() {
                 {/* Parallax background image */}
                 <motion.div className="absolute inset-0" style={{ y: imgY }}>
                     <img
-                        src={labData.hero.image}
-                        alt="Smart Application Lab"
+                        src={heroData.imageUrl || heroData.image || fallbackData.hero.image}
+                        alt={heroData.title}
                         className="w-full h-full object-cover object-center"
+                        onError={(e) => {
+                            e.target.src = fallbackData.hero.image;
+                        }}
                     />
-                    {/* Hero overlay with premium gradient - matching Support.js */}
+                    {/* Hero overlay with premium gradient */}
                     <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,86,0.88)_0%,rgba(30,58,138,0.72)_50%,rgba(14,165,233,0.82)_100%)]" />
                     <div className="absolute inset-0 bg-[linear-gradient(to_top,#0f2356_0%,transparent_55%)]" />
                 </motion.div>
 
-                {/* Grid pattern - matching Support.js */}
+                {/* Grid pattern */}
                 <div className="absolute inset-0 opacity-30 pointer-events-none" style={{
                     backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
                     backgroundSize: '64px 64px'
@@ -210,19 +246,21 @@ export default function SmartApplicationLab() {
                         className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[0.92] mb-4 text-center"
                         style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '-0.02em' }}
                     >
-                        {labData.hero.title}
+                        {heroData.title}
                     </motion.h1>
 
                     {/* Tagline */}
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.18 }}
-                        className="text-xl sm:text-2xl md:text-3xl font-semibold text-white/90 mb-6 text-center"
-                        style={{ fontFamily: "'Playfair Display', serif" }}
-                    >
-                        {labData.hero.tagline}
-                    </motion.h2>
+                    {heroData.tag && (
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.18 }}
+                            className="text-xl sm:text-2xl md:text-3xl font-semibold text-white/90 mb-6 text-center"
+                            style={{ fontFamily: "'Playfair Display', serif" }}
+                        >
+                            {heroData.tag}
+                        </motion.h2>
+                    )}
 
                     {/* Subtext */}
                     <motion.p
@@ -232,7 +270,7 @@ export default function SmartApplicationLab() {
                         className="text-base sm:text-lg leading-relaxed mb-10 max-w-2xl text-center text-white/80"
                         style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                        {labData.hero.description}
+                        {heroData.description}
                     </motion.p>
 
                     {/* CTA button */}
@@ -242,7 +280,7 @@ export default function SmartApplicationLab() {
                         transition={{ duration: 0.6, delay: 0.34 }}
                     >
                         <a
-                            href={`mailto:${labData.cta.email}`}
+                            href="mailto:info@smartlabtech.net"
                             className="relative overflow-hidden inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
                             style={{ fontFamily: "'Outfit', sans-serif" }}
                         >
@@ -252,37 +290,33 @@ export default function SmartApplicationLab() {
                 </div>
             </section>
 
-            {/* Main Description Section */}
+            {/* Main Cards Section */}
             <section className="bg-blue-50 py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                        <Reveal>
-                            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-sm border border-blue-100">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-sky-500 rounded-full" />
-                                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Playfair Display', serif" }}>
-                                        Our Approach
-                                    </h3>
-                                </div>
-                                <p className="text-slate-600 leading-relaxed" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {labData.mainDescription}
-                                </p>
-                            </div>
-                        </Reveal>
+                    <Reveal className="text-center mb-12">
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                            <div className="w-8 h-px bg-blue-600" />
+                            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Our Services
+                            </span>
+                        </div>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+                            What We Offer
+                        </h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto mt-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            Comprehensive support and training for your laboratory needs
+                        </p>
+                    </Reveal>
 
-                        <Reveal delay={0.15}>
-                            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-sm border border-blue-100">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-sky-500 rounded-full" />
-                                    <h3 className="text-xl font-bold text-slate-800" style={{ fontFamily: "'Playfair Display', serif" }}>
-                                        State-of-the-Art Facility
-                                    </h3>
-                                </div>
-                                <p className="text-slate-600 leading-relaxed" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {labData.facilityDescription}
-                                </p>
-                            </div>
-                        </Reveal>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {mainCards.map((card, index) => (
+                            <MainCard
+                                key={card._id || index}
+                                title={card.title}
+                                description={card.description}
+                                index={index}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
@@ -294,22 +328,30 @@ export default function SmartApplicationLab() {
                         <div className="flex items-center justify-center gap-2 mb-3">
                             <div className="w-8 h-px bg-blue-600" />
                             <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-blue-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                Lab Capabilities
+                                {services.tag || "Lab Capabilities"}
                             </span>
                         </div>
                         <h2 className="text-3xl sm:text-4xl font-bold text-slate-900" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            Technology & Support Services
+                            {services.title}
                         </h2>
                         <p className="text-slate-500 max-w-2xl mx-auto mt-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                            An application lab where technology is demonstrated to provide and support your research needs
+                            {services.description}
                         </p>
                     </Reveal>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {labData.offerings.map((offering, index) => (
+                        {services.cards && services.cards.map((offering, index) => (
                             <LabServiceItem
-                                key={offering.title}
-                                icon={offering.icon}
+                                key={offering._id || index}
+                                icon={offering.title === "e-Learning" ? BookOpen : 
+                                      offering.title === "e-Focus" ? Target :
+                                      offering.title === "Sample Analysis" ? Beaker :
+                                      offering.title === "Demonstration" ? Video :
+                                      offering.title === "Technical Presentations" ? Users :
+                                      offering.title === "Features of the Products" ? Settings :
+                                      offering.title === "Method Analysis" ? Wrench :
+                                      offering.title === "Trouble shooting solutions" ? HelpCircle :
+                                      offering.title === "Application Library" ? FileText : BookOpen}
                                 title={offering.title}
                                 description={offering.description}
                                 index={index}
@@ -319,47 +361,31 @@ export default function SmartApplicationLab() {
                 </div>
             </section>
 
-            {/* Features Pills Section */}
-            <section className="bg-blue-50 py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
-                    <Reveal className="text-center mb-8">
-                        <h3 className="text-xl font-semibold text-slate-700 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            At our Application Lab customers can participate in
-                        </h3>
-                    </Reveal>
-                    <div className="flex flex-wrap justify-center gap-3">
-                        {labData.features.map((feature, index) => (
-                            <FeaturePill key={feature} index={index}>
-                                {feature}
-                            </FeaturePill>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Final CTA Section - Premium gradient matching Support.js */}
+            {/* Final CTA Section */}
             <Reveal>
                 <div className="py-16 px-4 bg-blue-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-20">
                         <div className="rounded-2xl p-8 sm:p-12 flex flex-wrap items-center justify-between gap-6 bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] shadow-xl">
                             <div>
-                                <p className="text-[11px] font-bold text-sky-200 tracking-widest uppercase mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    Need Assistance?
-                                </p>
+                                {ctaData.tag && (
+                                    <p className="text-[11px] font-bold text-sky-200 tracking-widest uppercase mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                        {ctaData.tag}
+                                    </p>
+                                )}
                                 <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                                    {labData.cta.title}
+                                    {ctaData.title}
                                 </h3>
                                 <p className="text-sm text-white/70 max-w-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    Our application experts are ready to help you find the right solution.
+                                    {ctaData.description}
                                 </p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <a
-                                    href={`mailto:${labData.cta.email}`}
+                                    href="mailto:info@smartlabtech.net"
                                     className="relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-[linear-gradient(135deg,rgba(15,35,86,0.95)_0%,rgba(30,58,138,0.9)_50%,rgba(14,165,233,0.95)_100%)] hover:shadow-lg hover:-translate-y-0.5 transition-all before:absolute before:inset-0 before:-translate-x-full before:bg-gradient-to-r before:from-white/20 before:to-transparent before:transition-transform before:duration-500 hover:before:translate-x-0"
                                     style={{ fontFamily: "'Outfit', sans-serif" }}
                                 >
-                                    <Mail size={15} /> {labData.cta.buttonText}
+                                    <Mail size={15} /> {ctaData.buttonText || "Contact us for technical assistance!"}
                                 </a>
                             </div>
                         </div>
