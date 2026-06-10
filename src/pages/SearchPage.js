@@ -123,7 +123,9 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
-                onSearch(e.target.value);
+                if (e.target.value === '') {
+                  onClear();
+                }
               }}
               onKeyDown={handleKeyDown}
               onFocus={() => {
@@ -214,16 +216,27 @@ const PremiumSearchBar = ({ initialQuery, onSearch, onClear }) => {
   );
 };
 
-// Product Card Component
+// Product Card Component - Updated to match API response structure
 const ProductCard = ({ product, viewMode }) => {
   const navigate = useNavigate();
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const fallbackImage = "https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2";
 
-  const productLink = product._id ? `/product/${product._id}` : `/product/${product._id}`;
+  const isBlog = product.type === "blog";
+
+  // Handle different field names from API
+  const title = product.title || product.name || "";
+  const description = product.description || product.shortDesc || "";
+  const image = product.image || product.mainImage || fallbackImage;
+
+  // Blog specific fields
+  const badgeText = isBlog ? (product.author || "Blog") : (product.brand || "Brand");
+  const category = product.category || "Uncategorized";
+
+  // Product link
+  const productLink = isBlog ? `/blogs/${product.slug}` : `/product/${product.slug || product.id}`;
 
   if (viewMode === 'list') {
     return (
@@ -238,13 +251,12 @@ const ProductCard = ({ product, viewMode }) => {
         <div className="flex flex-col sm:flex-row">
           <div className="relative sm:w-64 h-44 sm:h-auto overflow-hidden bg-gradient-to-br from-slate-100 to-blue-50">
             <img
-              src={imageError ? fallbackImage : (product.mainImage || product.image || fallbackImage)}
-              alt={product.name}
+              src={imageError ? fallbackImage : image}
+              alt={title}
               onError={() => setImageError(true)}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
-            <div className={`absolute inset-0 bg-gradient-to-br from-blue-900/80 to-sky-600/80 flex items-center justify-center transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'
-              }`}>
+            <div className={`absolute inset-0 bg-gradient-to-br from-blue-900/80 to-sky-600/80 flex items-center justify-center transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
               <button className="px-4 py-2 bg-white text-blue-600 font-semibold rounded-full text-sm">
                 View Details
               </button>
@@ -259,7 +271,7 @@ const ProductCard = ({ product, viewMode }) => {
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-3">
                 <span className="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg">
-                  {product.brandName || product.brand?.name || 'Brand'}
+                  {badgeText}
                 </span>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -268,17 +280,31 @@ const ProductCard = ({ product, viewMode }) => {
                   <span className="text-xs text-slate-500">({product.reviews || 0})</span>
                 </div>
               </div>
-
+            </div>
+            <div className="mb-2">
+              <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${isBlog ? "bg-purple-100 text-purple-700" : "bg-emerald-100 text-emerald-700"}`}>
+                {isBlog ? "BLOG" : "PRODUCT"}
+              </span>
             </div>
             <h3 className="font-serif text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition line-clamp-1">
-              {product.name}
+              {title}
             </h3>
-            <p className="text-slate-500 text-sm mb-3 line-clamp-2">{product.shortDesc || product.fullDesc?.substring(0, 100) || 'Premium laboratory equipment for professional use'}</p>
+            <p className="text-slate-500 text-sm mb-3 line-clamp-2">{description?.substring(0, 100)}</p>
             <div className="flex items-center justify-between">
-
+              {!isBlog && product.price && (
+                <div className="flex flex-col">
+                  <span className="text-lg font-bold text-blue-600">${product.price?.toLocaleString()}</span>
+                </div>
+              )}
+              {isBlog && product.date && (
+                <div className="flex items-center gap-1">
+                  <Clock size={12} className="text-slate-400" />
+                  <span className="text-xs text-slate-500">{new Date(product.date).toLocaleDateString()}</span>
+                </div>
+              )}
               <div className="flex items-center gap-1.5">
-                <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
-                <span className="text-xs text-slate-500">{product.inStock ? 'In Stock' : 'Made to Order'}</span>
+                <div className={`w-2 h-2 rounded-full ${!isBlog && product.inStock !== false ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
+                <span className="text-xs text-slate-500">{!isBlog && product.inStock !== false ? 'In Stock' : 'Available'}</span>
               </div>
             </div>
           </div>
@@ -287,6 +313,7 @@ const ProductCard = ({ product, viewMode }) => {
     );
   }
 
+  // Grid View
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -300,13 +327,12 @@ const ProductCard = ({ product, viewMode }) => {
 
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-blue-50">
         <img
-          src={imageError ? fallbackImage : (product.mainImage || product.image || fallbackImage)}
-          alt={product.name}
+          src={imageError ? fallbackImage : image}
+          alt={title}
           onError={() => setImageError(true)}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        <div className={`absolute inset-0 bg-gradient-to-br from-blue-900/80 to-sky-600/80 flex items-center justify-center transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'
-          }`}>
+        <div className={`absolute inset-0 bg-gradient-to-br from-blue-900/80 to-sky-600/80 flex items-center justify-center transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
           <button className="px-5 py-2.5 bg-white text-blue-600 font-semibold rounded-full text-sm flex items-center gap-2">
             Quick View <Eye size={14} />
           </button>
@@ -316,13 +342,12 @@ const ProductCard = ({ product, viewMode }) => {
             <Sparkles size={10} /> FEATURED
           </div>
         )}
-
       </div>
 
       <div className="p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded-full border border-blue-200">
-            {product.brandName || product.brand?.name || 'Brand'}
+            {badgeText}
           </span>
           <div className="flex items-center gap-0.5">
             {[...Array(5)].map((_, i) => (
@@ -331,17 +356,27 @@ const ProductCard = ({ product, viewMode }) => {
             <span className="text-[10px] text-slate-400 ml-0.5">({product.reviews || 0})</span>
           </div>
         </div>
-
+        <div className="mb-2">
+          <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${isBlog ? "bg-purple-100 text-purple-700" : "bg-emerald-100 text-emerald-700"}`}>
+            {isBlog ? "BLOG" : "PRODUCT"}
+          </span>
+        </div>
         <h3 className="font-serif text-base font-bold text-slate-900 mb-1.5 group-hover:text-blue-600 transition line-clamp-1">
-          {product.name}
+          {title}
         </h3>
-        <p className="text-slate-500 text-xs mb-4 line-clamp-2">{product.shortDesc || product.fullDesc?.substring(0, 60) || 'Premium laboratory equipment'}</p>
+        <p className="text-slate-500 text-xs mb-4 line-clamp-2">{description?.substring(0, 80)}</p>
 
         <div className="flex items-end justify-between">
 
+          {isBlog && product.date && (
+            <div className="flex items-center gap-1">
+              <Clock size={10} className="text-slate-400" />
+              <span className="text-[10px] text-slate-500">{new Date(product.date).toLocaleDateString()}</span>
+            </div>
+          )}
           <div className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
-            <span className="text-[10px] text-slate-500">{product.inStock ? 'In Stock' : 'On Order'}</span>
+            <div className={`w-2 h-2 rounded-full ${!isBlog && product.inStock !== false ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
+            <span className="text-[10px] text-slate-500">{!isBlog && product.inStock !== false ? 'In Stock' : 'Available'}</span>
           </div>
         </div>
       </div>
@@ -393,16 +428,16 @@ export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
-  const [products, setProducts] = useState([]);
+  const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedBrand, setSelectedBrand] = useState('All');
+  const [selectedType, setSelectedType] = useState('All');
   const [sortBy, setSortBy] = useState('relevance');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
@@ -410,45 +445,53 @@ export default function SearchResults() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fetch all products or search results based on query
+  // Fetch search results based on query
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        let url;
-        if (query) {
-          url = `${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}`;
-        } else {
-          url = `${API_BASE_URL}/products`;
-        }
+    const fetchResults = async () => {
+      if (!query) {
+        setResults([]);
+        setFilteredResults([]);
+        setHasSearched(false);
+        return;
+      }
 
+      setLoading(true);
+      setHasSearched(true);
+
+      try {
+        const url = `${API_BASE_URL}/products/search/all?q=${encodeURIComponent(query)}`;
         const response = await fetch(url);
         const data = await response.json();
 
         if (data.success) {
-          const productsData = query ? data.data : data.data;
-          setProducts(productsData);
-          setFilteredResults(productsData);
+          const resultsData = data.data || [];
+          setResults(resultsData);
+          setFilteredResults(resultsData);
 
-          // Extract unique categories and brands
-          const uniqueCategories = ['All', ...new Set(productsData.map(p => p.categoryName || p.category?.name || 'Other').filter(Boolean))];
-          const uniqueBrands = ['All', ...new Set(productsData.map(p => p.brandName || p.brand?.name).filter(Boolean))];
+          // Extract unique categories
+          const uniqueCategories = [
+            "All",
+            ...new Set(
+              resultsData
+                .map(item => item.category || "Other")
+                .filter(Boolean)
+            ),
+          ];
           setCategories(uniqueCategories);
-          setBrands(uniqueBrands);
         } else {
-          setProducts([]);
+          setResults([]);
           setFilteredResults([]);
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]);
+        console.error('Error fetching search results:', error);
+        setResults([]);
         setFilteredResults([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchResults();
   }, [query]);
 
   const handleSearch = (newQuery) => {
@@ -463,32 +506,40 @@ export default function SearchResults() {
     setSearchParams({});
   };
 
-  // Apply category and brand filters
-  const displayResults = filteredResults.filter(product => {
-    const productCategory = product.categoryName || product.category?.name || 'Other';
-    const productBrand = product.brandName || product.brand?.name;
-    const matchesCategory = selectedCategory === 'All' || productCategory === selectedCategory;
-    const matchesBrand = selectedBrand === 'All' || productBrand === selectedBrand;
-    return matchesCategory && matchesBrand;
+  // Apply category and type filters
+  const displayResults = filteredResults.filter(item => {
+    const itemCategory = item.category || "Other";
+    const matchesCategory = selectedCategory === 'All' || itemCategory === selectedCategory;
+    const matchesType = selectedType === 'All' || item.type === selectedType;
+    return matchesCategory && matchesType;
   });
 
   // Sort results
   const sortedResults = [...displayResults].sort((a, b) => {
-    if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
-    if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
-    if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
+    if (sortBy === "title-asc")
+      return (a.title || "").localeCompare(b.title || "");
+    if (sortBy === "title-desc")
+      return (b.title || "").localeCompare(a.title || "");
+    if (sortBy === "rating")
+      return (b.rating || 0) - (a.rating || 0);
+    if (sortBy === "price-asc" && a.type === 'product' && b.type === 'product')
+      return (a.price || 0) - (b.price || 0);
+    if (sortBy === "price-desc" && a.type === 'product' && b.type === 'product')
+      return (b.price || 0) - (a.price || 0);
     // relevance - default order from API
     return 0;
   });
+
+  // Stats for display
+  const productCount = results.filter(r => r.type === 'product').length;
+  const blogCount = results.filter(r => r.type === 'blog').length;
 
   return (
     <>
       <Navbar />
       <div className="bg-blue-50 font-sans min-h-screen">
-
         {/* Hero Section with Background Image and Blue Overlay */}
         <section className="relative pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
-
           {/* Background Image */}
           <div className="absolute inset-0">
             <img
@@ -496,12 +547,9 @@ export default function SearchResults() {
               alt="Laboratory Equipment Background"
               className="w-full h-full object-cover object-center"
             />
-
             {/* Blue Overlay */}
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,35,86,0.88)_0%,rgba(30,58,138,0.72)_50%,rgba(14,165,233,0.82)_100%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(to_top,#0f2356_0%,transparent_55%)]" />
-
-            {/* Subtle pattern overlay for texture */}
             <div
               className="absolute inset-0 opacity-30"
               style={{
@@ -510,8 +558,6 @@ export default function SearchResults() {
                 backgroundRepeat: 'repeat'
               }}
             />
-
-            {/* Gradient overlays for depth */}
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent" />
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/15 rounded-full blur-3xl" />
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-sky-400/15 rounded-full blur-3xl" />
@@ -557,29 +603,46 @@ export default function SearchResults() {
             />
 
             {/* Results Count */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-6 text-center"
-            >
-              <p className="text-white/80 text-sm">
-                {!loading && (
-                  query ? (
-                    <>Found <span className="font-bold text-white">{filteredResults.length}</span> results for "<span className="text-white">{query}</span>"</>
-                  ) : (
-                    <>Showing all <span className="font-bold text-white">{filteredResults.length}</span> products</>
-                  )
-                )}
-              </p>
-            </motion.div>
+            {hasSearched && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-6 text-center"
+              >
+                <p className="text-white/80 text-sm">
+                  {!loading && (
+                    <>
+                      Found <span className="font-bold text-white">{results.length}</span> results for "<span className="text-white">{query}</span>"
+                      {results.length > 0 && (
+                        <span className="ml-2 text-xs">
+                          ({productCount} product{productCount !== 1 ? 's' : ''}, {blogCount} blog{blogCount !== 1 ? 's' : ''})
+                        </span>
+                      )}
+                    </>
+                  )}
+                </p>
+              </motion.div>
+            )}
           </div>
         </section>
 
         {/* Filters Bar */}
-        {!loading && filteredResults.length > 0 && (
+        {!loading && results.length > 0 && (
           <section className="top-[106px] sm:top-[114px] lg:top-[122px] z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8">
             <div className="max-w-8xl mx-auto">
               <div className="flex flex-wrap items-center gap-3">
+                {/* Type Filter */}
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
+                >
+                  <option value="All">All Types</option>
+                  <option value="product">Products</option>
+                  <option value="blog">Blogs</option>
+                </select>
+
+                {/* Category Filter */}
                 {categories.length > 1 && (
                   <select
                     value={selectedCategory}
@@ -590,36 +653,31 @@ export default function SearchResults() {
                   </select>
                 )}
 
-                {brands.length > 1 && (
-                  <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
-                  >
-                    {brands.map(brand => <option key={brand} value={brand}>{brand}</option>)}
-                  </select>
-                )}
-
+                {/* Sort Options */}
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
                 >
                   <option value="relevance">Sort: Relevance</option>
-                  <option value="name-asc">Name: A to Z</option>
-                  <option value="name-desc">Name: Z to A</option>
+                  <option value="title-asc">Title: A to Z</option>
+                  <option value="title-desc">Title: Z to A</option>
                   <option value="rating">Highest Rated</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
                 </select>
 
-                {(selectedCategory !== 'All' || selectedBrand !== 'All') && (
+                {/* Clear Filters Button */}
+                {(selectedCategory !== 'All' || selectedType !== 'All') && (
                   <button
-                    onClick={() => { setSelectedCategory('All'); setSelectedBrand('All'); }}
+                    onClick={() => { setSelectedCategory('All'); setSelectedType('All'); }}
                     className="px-3 py-2 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition flex items-center gap-1"
                   >
-                    <X size={14} /> Clear
+                    <X size={14} /> Clear Filters
                   </button>
                 )}
 
+                {/* View Mode Toggle */}
                 <div className="flex gap-1 ml-auto">
                   <button
                     onClick={() => setViewMode('grid')}
@@ -644,23 +702,41 @@ export default function SearchResults() {
           <div className="max-w-8xl mx-auto">
             {loading ? (
               <LoadingState />
+            ) : !hasSearched ? (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🔬</div>
+                <h3 className="font-serif text-2xl font-semibold text-slate-800 mb-2">
+                  Start Your Search
+                </h3>
+                <p className="text-slate-500">Enter a keyword to find products, blogs, and more...</p>
+              </div>
             ) : query && sortedResults.length === 0 ? (
               <NoResults query={query} onClear={handleClearSearch} />
             ) : sortedResults.length > 0 ? (
-              <div className={viewMode === 'grid'
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-                : "space-y-4"
-              }>
-                {sortedResults.map((product, index) => (
-                  <ProductCard key={product._id || index} product={product} viewMode={viewMode} />
-                ))}
-              </div>
+              <>
+                {/* Results Count */}
+                <div className="mb-4 text-sm text-slate-500">
+                  Showing {sortedResults.length} of {filteredResults.length} results
+                </div>
+                <div className={viewMode === 'grid'
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+                  : "space-y-4"
+                }>
+                  {sortedResults.map((item, index) => (
+                    <ProductCard
+                      key={item.id || item._id || item.slug || index}
+                      product={item}
+                      viewMode={viewMode}
+                    />
+                  ))}
+                </div>
+              </>
             ) : null}
           </div>
         </section>
 
         {/* Related Categories */}
-        {!loading && filteredResults.length > 0 && categories.length > 1 && (
+        {!loading && results.length > 0 && categories.length > 1 && (
           <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
             <div className="max-w-8xl mx-auto">
               <h3 className="font-serif text-xl font-bold text-slate-900 mb-4">Browse Categories</h3>

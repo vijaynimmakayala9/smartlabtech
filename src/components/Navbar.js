@@ -217,20 +217,21 @@ export default function Navbar() {
     try {
       setSearchLoading(true);
       setSearchError(null);
-      const res = await fetch(`https://smartlabtechbackend-p5h6.onrender.com/api/products/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`https://smartlabtechbackend-p5h6.onrender.com/api/products/search/all?q=${encodeURIComponent(query)}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
-        const transformed = json.data.map(product => ({
-          type: 'product',
-          id: product._id,
-          name: product.name,
-          brandName: product.brandName || product.brand?.name,
-          categoryName: product.categoryName || product.category?.name,
-          image: product.mainImage,
-          brand: product.brand,
-          category: product.category,
-          slug: product.slug,
+        const transformed = json.data.map(item => ({
+          type: item.type,
+          id: item.id,
+          name: item.title,
+          image: item.image,
+          slug: item.slug,
+          brandName: item.brand,
+          categoryName: item.category,
+          description: item.description,
+          author: item.author,
+          date: item.date,
         }));
         setSearchItems(transformed);
       } else {
@@ -440,13 +441,11 @@ export default function Navbar() {
   // Handle suggestion/result click
   const handleItemClick = (item) => {
     setIsSearchOpen(false);
-    setSearchTerm('');
-    setSearchItems([]);
-    setIsSearching(false);
-    if (item.type === 'product' && item.id) {
+
+    if (item.type === "product") {
       navigate(`/product/${item.id}`);
-    } else {
-      navigate(`/product/${item.id}`);
+    } else if (item.type === "blog") {
+      navigate(`/blogs/${item.slug}`);
     }
   };
 
@@ -739,23 +738,45 @@ export default function Navbar() {
 
                                     {/* Product Info */}
                                     <div className="flex flex-col flex-1 min-w-0">
-                                      <p className="text-sm font-semibold text-blue-900 truncate group-hover:text-blue-700">
-                                        {item.name}
-                                      </p>
+                                      <div className="flex items-center gap-2">
+                                        <p className="text-sm font-semibold text-blue-900 truncate">
+                                          {item.name}
+                                        </p>
+
+                                        <span
+                                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.type === "product"
+                                              ? "bg-blue-100 text-blue-700"
+                                              : "bg-purple-100 text-purple-700"
+                                            }`}
+                                        >
+                                          {item.type}
+                                        </span>
+                                      </div>
                                       <div className="flex items-center gap-2 mt-0.5">
-                                        {item.brandName && (
-                                          <span className="text-xs text-slate-500 truncate">
-                                            {item.brandName}
-                                          </span>
+                                        {item.type === "product" ? (
+                                          <>
+                                            {item.brandName && (
+                                              <span className="text-xs text-slate-500">
+                                                {item.brandName}
+                                              </span>
+                                            )}
+
+                                          </>
+                                        ) : (
+                                          <>
+                                            {item.author && (
+                                              <span className="text-xs text-slate-500">
+                                                {item.author}
+                                              </span>
+                                            )}
+                                            {item.categoryName && (
+                                              <span className="text-xs text-slate-400">
+                                                {item.categoryName}
+                                              </span>
+                                            )}
+                                          </>
                                         )}
-                                        {item.brandName && item.categoryName && (
-                                          <span className="text-xs text-slate-300">•</span>
-                                        )}
-                                        {item.categoryName && (
-                                          <span className="text-xs text-slate-400 truncate">
-                                            {item.categoryName}
-                                          </span>
-                                        )}
+
                                       </div>
                                     </div>
 
