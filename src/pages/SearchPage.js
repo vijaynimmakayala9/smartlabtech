@@ -236,7 +236,7 @@ const ProductCard = ({ product, viewMode }) => {
   const category = product.category || "Uncategorized";
 
   // Product link
-  const productLink = isBlog ? `/blogs/${product.slug}` : `/product/${product.slug || product.id}`;
+  const productLink = isBlog ? `/blog/${product.slug}` : `/product/${product.id || product.id}`;
 
   if (viewMode === 'list') {
     return (
