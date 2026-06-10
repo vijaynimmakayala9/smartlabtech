@@ -121,7 +121,7 @@ export function QuoteForm({ onClose }) {
     company: '',
     category: '',
     product: '',
-    quantity: '',
+    quantity: '1',
     city: '',
     usage: ''
   };
@@ -215,17 +215,17 @@ export function QuoteForm({ onClose }) {
     }
 
     // Quantity
-    if (!form.quantity) {
-      e.quantity = 'Quantity is required';
-    } else if (Number(form.quantity) < 1) {
-      e.quantity = 'Quantity must be at least 1';
-    }
+    // if (!form.quantity) {
+    //   e.quantity = 'Quantity is required';
+    // } else if (Number(form.quantity) < 1) {
+    //   e.quantity = 'Quantity must be at least 1';
+    // }
 
-    // Usage
+    // Description
     if (!form.usage.trim()) {
-      e.usage = 'Usage / Application is required';
+      e.usage = 'Description is required';
     } else if (form.usage.trim().length < 5) {
-      e.usage = 'Please enter proper usage details';
+      e.usage = 'Please enter a proper description';
     }
 
     return e;
@@ -258,7 +258,7 @@ export function QuoteForm({ onClose }) {
           category: form.category,
           product: form.product,
           usage: form.usage,
-          quantity: form.quantity || 1
+          quantity: form.quantity || 0
         })
       });
 
@@ -362,7 +362,7 @@ export function QuoteForm({ onClose }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                 <Field label="Company / Institute *">
-                  <Input icon={Building2} placeholder="Optional" value={form.company} onChange={set('company')} error={errors.company} />
+                  <Input icon={Building2} placeholder="Enter Your Company Name" value={form.company} onChange={set('company')} error={errors.company} />
                 </Field>
                 <Field label="City *">
                   <Input placeholder="Your city " value={form.city} onChange={set('city')} error={errors.city} />
@@ -415,12 +415,12 @@ export function QuoteForm({ onClose }) {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                <Field label="Quantity *">
+              <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 sm:gap-3.5">
+                {/* <Field label="Quantity *">
                   <Input type="number" min="1" placeholder="e.g. 2" value={form.quantity} onChange={set('quantity')} error={errors.quantity} />
-                </Field>
-                <Field label="Usage / Application *">
-                  <Input placeholder="Research / QC / Production" value={form.usage} onChange={set('usage')} error={errors.usage} />
+                </Field> */}
+                <Field label="Description *">
+                  <Input placeholder="Describe your requirements" value={form.usage} onChange={set('usage')} error={errors.usage} />
                 </Field>
               </div>
 
