@@ -138,7 +138,7 @@ export function QuoteForm({ onClose }) {
   const fetchCategories = async () => {
     try {
       setLoadingCategories(true);
-      const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/categories/with-products');
+      const response = await fetch('http://31.97.228.17:5101/api/categories/with-products');
       const data = await response.json();
 
       if (data.success) {
@@ -243,7 +243,7 @@ export function QuoteForm({ onClose }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/quotes/submit', {
+      const response = await fetch('http://31.97.228.17:5101/api/quotes/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ export default function About({ id }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://smartlabtechbackend-p5h6.onrender.com/api/homepage/about")
+    fetch("http://31.97.228.17:5101/api/homepage/about")
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {

@@ -99,7 +99,7 @@ const ResourcesPage = () => {
   const fetchResourceData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://smartlabtechbackend-p5h6.onrender.com/api/resources');
+      const response = await fetch('http://31.97.228.17:5101/api/resources');
       const data = await response.json();
 
       if (data.success && data.data) {

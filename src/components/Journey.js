@@ -62,7 +62,7 @@ export default function JourneySection({ id }) {
     const fetchAchievements = async () => {
       try {
         const res = await axios.get(
-          'https://smartlabtechbackend-p5h6.onrender.com/api/homepage/achievements'
+          'http://31.97.228.17:5101/api/homepage/achievements'
         );
 
         setData(res.data.data);

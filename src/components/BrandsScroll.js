@@ -8,7 +8,7 @@ export default function BrandMarquee() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('https://smartlabtechbackend-p5h6.onrender.com/api/brands')
+        fetch('http://31.97.228.17:5101/api/brands')
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.data) {

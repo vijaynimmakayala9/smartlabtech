@@ -26,7 +26,7 @@ export default function Hero({ id }) {
 
   // Fetch hero slides from API
   useEffect(() => {
-    fetch("https://smartlabtechbackend-p5h6.onrender.com/api/homepage/hero")
+    fetch("http://31.97.228.17:5101/api/homepage/hero")
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data.length > 0) {

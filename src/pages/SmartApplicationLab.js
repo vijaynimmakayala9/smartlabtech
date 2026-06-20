@@ -127,7 +127,7 @@ export default function SmartApplicationLab() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('https://smartlabtechbackend-p5h6.onrender.com/api/applicationpage/all');
+                const response = await axios.get('http://31.97.228.17:5101/api/applicationpage/all');
                 if (response.data.success) {
                     setPageData(response.data.data);
                 } else {

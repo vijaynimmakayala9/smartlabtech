@@ -24,7 +24,7 @@ export default function ServiceModal({ isOpen, onClose }) {
       setLoading(true);
 
       const response = await axios.get(
-        "https://smartlabtechbackend-p5h6.onrender.com/api/servicepage/popup"
+        "http://31.97.228.17:5101/api/servicepage/popup"
       );
 
       console.log("Popup API:", response.data);
